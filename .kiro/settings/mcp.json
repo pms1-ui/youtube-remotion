@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "remotion": {
+      "command": "npx",
+      "args": [
+        "@remotion/mcp@latest"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "remotion-documentation"
+      ]
+    }
+  }
+}

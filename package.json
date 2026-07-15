@@ -1,0 +1,23 @@
+{
+  "name": "youtube-remotion",
+  "version": "1.0.0",
+  "description": "Script-based short clip video generator using Remotion",
+  "scripts": {
+    "start": "npx remotion studio",
+    "build": "npx remotion render src/index.ts HealthVideo out/video.mp4",
+    "render": "npx remotion render src/index.ts HealthVideo out/video.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.261",
+    "@remotion/paths": "4.0.261",
+    "@remotion/shapes": "4.0.261",
+    "@remotion/transitions": "4.0.261",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.261"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}
