@@ -1,12 +1,14 @@
 import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
 import { Scene } from "./data/script";
-import { IntroScene } from "./scenes/IntroScene";
 import { TextScene } from "./scenes/TextScene";
 import { BarChartScene } from "./scenes/BarChartScene";
 import { DonutChartScene } from "./scenes/DonutChartScene";
 import { LineGraphScene } from "./scenes/LineGraphScene";
 import { HighlightScene } from "./scenes/HighlightScene";
+import { CompareScene } from "./scenes/CompareScene";
+import { TimelineScene } from "./scenes/TimelineScene";
 import { TransitionOverlay } from "./components/TransitionOverlay";
+import { StarfieldBackground } from "./components/StarfieldBackground";
 
 export type HealthVideoProps = {
   scenes: Scene[];
@@ -18,7 +20,8 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
   let currentFrame = 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0a0a0a" }}>
+    <AbsoluteFill style={{ backgroundColor: "#050508" }}>
+      <StarfieldBackground />
       {scenes.map((scene, index) => {
         const startFrame = currentFrame;
         const durationInFrames = Math.round(scene.durationInSeconds * fps);
@@ -32,13 +35,13 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
           >
             <TransitionOverlay durationInFrames={durationInFrames} />
 
-            {scene.type === "intro" && <IntroScene scene={scene} />}
             {scene.type === "text" && <TextScene scene={scene} />}
             {scene.type === "barChart" && <BarChartScene scene={scene} />}
             {scene.type === "donutChart" && <DonutChartScene scene={scene} />}
             {scene.type === "lineGraph" && <LineGraphScene scene={scene} />}
             {scene.type === "highlight" && <HighlightScene scene={scene} />}
-            {scene.type === "outro" && <IntroScene scene={scene} />}
+            {scene.type === "compare" && <CompareScene scene={scene} />}
+            {scene.type === "timeline" && <TimelineScene scene={scene} />}
           </Sequence>
         );
       })}

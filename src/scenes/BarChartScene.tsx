@@ -9,10 +9,15 @@ import { Scene } from "../data/script";
 
 export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const accent = scene.accent || "#ffd93d";
   const barData = scene.barData || [];
   const maxValue = Math.max(...barData.map((d) => d.value));
+
+  // 장면 전체 slow zoom out
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.4, 1.0], {
+    extrapolateRight: "clamp",
+  });
 
   const titleOpacity = interpolate(frame, [5, 20], [0, 1], {
     extrapolateRight: "clamp",
@@ -28,10 +33,11 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "transparent",
         justifyContent: "center",
         alignItems: "center",
         padding: 60,
+        transform: `scale(${sceneZoom})`,
       }}
     >
       {/* 메인 텍스트 */}

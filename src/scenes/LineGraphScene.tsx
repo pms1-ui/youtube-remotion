@@ -10,10 +10,15 @@ import { Scene } from "../data/script";
 
 export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
   const lineData = scene.lineData || [];
   const maxValue = Math.max(...lineData.map((d) => d.value));
+
+  // 장면 전체 slow zoom in
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.4], {
+    extrapolateRight: "clamp",
+  });
 
   // 차트 영역
   const chartWidth = 1150;
@@ -22,9 +27,11 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const innerWidth = chartWidth - padding.left - padding.right;
   const innerHeight = chartHeight - padding.top - padding.bottom;
 
-  // 데이터 포인트 좌표
+  // 데이터 포인트 좌표 — 첫 포인트를 우측으로 오프셋하여 Y축 라벨과 겹침 방지
+  const xOffset = 40; // 첫 포인트 우측 시작 오프셋
+  const usableWidth = innerWidth - xOffset;
   const points = lineData.map((item, i) => ({
-    x: padding.left + (i / (lineData.length - 1)) * innerWidth,
+    x: padding.left + xOffset + (i / (lineData.length - 1)) * usableWidth,
     y: padding.top + innerHeight - (item.value / maxValue) * innerHeight,
     ...item,
   }));
@@ -61,10 +68,11 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "transparent",
         justifyContent: "center",
         alignItems: "center",
         padding: 60,
+        transform: `scale(${sceneZoom})`,
       }}
     >
       <div
@@ -95,7 +103,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
 
       {/* SVG 라인 그래프 */}
       <svg width={chartWidth} height={chartHeight} style={{ overflow: "visible" }}>
-        {/* Y축 그리드 */}
+        {/* Y축 그리드 — 라벨을 왼쪽 바깥으로 충분히 이격 */}
         {[0, 25, 50, 75, 100].map((val) => {
           const y = padding.top + innerHeight - (val / maxValue) * innerHeight;
           return (
@@ -110,10 +118,10 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 strokeDasharray="8 6"
               />
               <text
-                x={padding.left - 18}
-                y={y + 8}
-                fill="#777"
-                fontSize={26}
+                x={padding.left - 24}
+                y={y + 6}
+                fill="#555"
+                fontSize={22}
                 fontFamily="sans-serif"
                 textAnchor="end"
               >
@@ -186,10 +194,10 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 stroke="#0a0a0a"
                 strokeWidth={4}
               />
-              {/* 값 */}
+              {/* 값 — 정점(최대값)은 아래에 표시, 그 외 위에 표시 */}
               <text
                 x={p.x}
-                y={p.y - 30}
+                y={p.value === maxValue ? p.y + 50 : p.y - 30}
                 fill="#ffffff"
                 fontSize={30}
                 fontWeight="bold"
@@ -216,36 +224,41 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           );
         })}
 
-        {/* 정점 표시 */}
-        {frame > 70 && points.length > 1 && (
-          <g
-            opacity={interpolate(frame, [70, 85], [0, 1], {
-              extrapolateRight: "clamp",
-            })}
-          >
-            <rect
-              x={points[1].x - 65}
-              y={points[1].y - 62}
-              width={130}
-              height={38}
-              rx={12}
-              fill="#00cec918"
-              stroke="#00cec950"
-              strokeWidth={2}
-            />
-            <text
-              x={points[1].x}
-              y={points[1].y - 37}
-              fill="#00cec9"
-              fontSize={22}
-              fontWeight="bold"
-              fontFamily="sans-serif"
-              textAnchor="middle"
+        {/* 정점 표시 — 값 텍스트 아래에 배치 (겹침 방지) */}
+        {frame > 70 && points.length > 1 && (() => {
+          const peakIdx = points.findIndex((p) => p.value === maxValue);
+          if (peakIdx === -1) return null;
+          const peak = points[peakIdx];
+          return (
+            <g
+              opacity={interpolate(frame, [70, 85], [0, 1], {
+                extrapolateRight: "clamp",
+              })}
             >
-              ▲ 정점
-            </text>
-          </g>
-        )}
+              <rect
+                x={peak.x - 55}
+                y={peak.y + 65}
+                width={110}
+                height={34}
+                rx={10}
+                fill="#00cec918"
+                stroke="#00cec950"
+                strokeWidth={2}
+              />
+              <text
+                x={peak.x}
+                y={peak.y + 88}
+                fill="#00cec9"
+                fontSize={22}
+                fontWeight="bold"
+                fontFamily="sans-serif"
+                textAnchor="middle"
+              >
+                ▲ 정점
+              </text>
+            </g>
+          );
+        })()}
       </svg>
     </AbsoluteFill>
   );

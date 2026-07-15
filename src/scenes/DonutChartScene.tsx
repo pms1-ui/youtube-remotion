@@ -32,7 +32,7 @@ export const DonutChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "transparent",
         justifyContent: "center",
         alignItems: "center",
         padding: 60,
