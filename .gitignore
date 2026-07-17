@@ -2,3 +2,7 @@ node_modules/
 out/
 dist/
 .DS_Store
+
+# Generated character images (large PNGs, regenerated via Higgsfield)
+public/*.png
+!public/.gitkeep

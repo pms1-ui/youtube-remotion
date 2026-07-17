@@ -6,171 +6,162 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 
 ---
 
-## 제작 프로세스
+## 제작 프로세스 (최적 워크플로우)
 
-### 1단계: 스크립트 의미 단위 분해
+### ★ 병렬 처리로 속도 최적화
+
+```
+스크립트 수령
+    ├── [메인] ① 구성 기획 → ② script.ts 작성 → ③ TypeScript 검증
+    └── [서브에이전트/병렬] ④ 캐릭터 이미지 N개 생성 + 배경제거 + 다운로드
+         ↓ (두 작업이 동시 완료)
+    ⑤ script.ts에 characterImage 할당
+    ⑥ 검증 (겹침, 균형감) + Studio 시작
+```
+
+### 단계별 상세
+
+**① 구성 기획 (Plan)**
+- 스크립트를 의미 단위로 분해
+- 각 장면의 타입, 텍스트, 데이터, 시각 요소를 표로 정리
+- **차트/그래프 가능 여부를 반드시 판단** — 가능하면 어떤 데이터로 구성할지까지 기획
+- 사용자 확인 없이 바로 구현으로 진행 (별도 요청 없는 한)
+
+**② 영상 구현 (Implement)**
+- 확정된 구성을 기반으로 `src/data/script.ts` 작성
+- `npx tsc --noEmit`으로 검증
+
+**③~④ 캐릭터 이미지 생성 (병렬)**
+- ②와 동시에 진행 가능
+- Higgsfield `gpt_image_2` 모델로 장면 수만큼 생성 (`count: 4` 병렬)
+- 포즈 프롬프트 풀에서 장면별로 다른 포즈 선택
+- 생성 → 배경 제거 → 다운로드 → public/ 저장
+
+**⑤~⑥ 조립 및 검증**
+- script.ts에 characterImage 필드 할당
+- 겹침 검증, 균형감 확인
+- `npm start` 실행
+
+### 구성 기획 시 차트/그래프 판단 필드
+각 장면에 대해 아래를 반드시 포함:
+
+| 필드 | 설명 |
+|------|------|
+| 차트 가능 여부 | O / X |
+| 차트 타입 | barChart / donutChart / lineGraph / N/A |
+| 데이터 근거 | 스크립트에서 수치를 추출한 근거 (없으면 불가) |
+| 구성 방식 | 어떤 항목을 어떤 값으로 표현할지 |
+
+---
+
+## 1단계: 스크립트 의미 단위 분해
+
+### 분해 규칙
 - 원문 스크립트를 문장/문단 단위로 나눔
 - 각 단위가 전달하는 **핵심 메시지**를 한 줄로 정리
 
-### 테두리/카드 색상 규칙
-- **highlight, compare 타입**: 보라색(#6c5ce7) 테두리 + 투명 배경
-- **text 타입**: 테두리/카드 없음 — 순수 텍스트만
-- 모든 타입에서 카드 배경은 투명(또는 극히 낮은 opacity)
-- **카드 안 텍스트 스타일 통일**: highlight와 compare의 박스 내 텍스트는 동일 스타일 (38px, fontWeight 700, #f0f0f0)
-
-### 화면 풍성도 원칙
-- **모든 장면에 부연설명(description) 추가 권장** — 메인 메시지만으로는 허전함
-- text 타입: 메인 텍스트 + subtitle + description (3단 구조 가능)
-- highlight 타입: 메인 텍스트 + description + 각 bullet별 부연설명(bulletDescriptions)
-- compare 타입: 메인 텍스트 + description + 좌우 카드 내 설명
-- description은 회색(#888) 작은 글씨(30~32px)로 맥락/배경 정보 전달
-- bulletDescriptions: 각 키워드가 구체적으로 뭘 의미하는지 한 줄 설명 추가
-- 원칙: **인포그래픽 느낌** = 키워드만 나열하지 않고, "왜/뭘/어떻게"가 화면에 함께 보여야 함
-
 ### 의미 분해 시 주의사항
-- 원문에 없는 해석을 넣지 않음 (예: "노화"라는 단어가 없는데 "급격한 노화?" 사용 금지)
+- 원문에 없는 해석을 넣지 않음
 - 원문의 논리 흐름을 정확히 반영: 원인 → 결과, 질문 → 답변, 문제 → 해결
-- "나이 탓 아님"처럼 원문이 말하지 않는 주장을 만들어내지 않음
+- 원문이 말하지 않는 주장을 만들어내지 않음
 
 ### 장면 분할 기준
-- **의미 단위별로 촘촘하게 쪼갬** — 속도감 있게 화면이 빠르게 전환되는 게 좋음
-- 한 장면당 3~6초, 한두 문장이 아니라 **하나의 키워드/메시지 단위**로 쪼갬
-- 예: "살 안 빠지고, 근육 안 붙고, 눈 침침, 잇몸 출혈" → 이걸 하나의 highlight로 묶되, 전후 맥락은 각각 별도 장면
-- 너무 짧은 문장("왜일까요?")은 다음 문장과 합치되, 합쳐도 한 메시지만
-- 긴 복문은 의미 전환점("~는데요,")에서 과감히 끊음
-- 같은 타입이 연속되지 않도록 타입 교차 배치 (text → highlight → compare → text...)
+- **의미 단위별로 촘촘하게 쪼갬** — 속도감 있게 화면이 빠르게 전환
+- 한 장면당 3~7초, **하나의 키워드/메시지 단위**로 쪼갬
+- 너무 짧은 문장은 다음 문장과 합치되, 합쳐도 한 메시지만
+- 긴 복문은 의미 전환점에서 과감히 끊음
+- 같은 타입이 연속되지 않도록 타입 교차 배치
 - 원칙: **한 화면 = 한 메시지, 5초 안에 바로 파악 가능한 분량**
 
-### 2단계: 시각 표현 판단
+### 시각 표현 판단 (차트 우선)
 각 의미 단위에 대해 아래 기준으로 판단:
 
 | 조건 | 시각 표현 |
 |------|-----------|
 | 구체적인 수치 데이터가 있음 | 차트/그래프 (barChart, donutChart, lineGraph) |
-| 비율/달성도 수치가 있음 | 원형 프로그레스 (highlight + bullets) |
-| 기능/항목 나열 (수치 없음) | 키워드 리스트 (highlight, bullets 텍스트만) |
-| 메시지 전달 (나열도 아님) | 텍스트 장면 (text) |
-| 브랜드/채널 소개 | 별도 인트로 없음 (스크립트 단위로 바로 시작) |
+| 비율/퍼센트 언급이 있음 (절반, 두 배 등) | 도넛 차트 또는 원형 프로그레스 |
+| A vs B 비교 + 수치 | 막대 차트 (barChart) |
+| A vs B 비교 (수치 없음) | compare |
+| 시계열/추이/변화 | 라인 그래프 (lineGraph) |
+| 기능/항목 나열 + 정도 차이 | highlight + bulletValues (원형 프로그레스) |
+| 기능/항목 나열 (수치 없음) | highlight (카드 그리드) |
+| 순서/과정/단계 | timeline |
+| 순수 메시지 전달 | text |
 
 **핵심 원칙:**
-- 차트/그래프는 **실제 수치가 스크립트에 존재할 때만** 사용
-- 근거 없는 수치를 만들어내지 않음
-- 시각 요소가 불필요한 장면에 억지로 차트를 넣지 않음
-
-### 3단계: 장면 구성안 작성
-- 판단 결과를 표로 정리
-- 각 장면의 타입, 텍스트, 데이터 유무를 명시
-- **확인 후** Remotion 데이터로 변환
-
-### 4단계: Remotion 데이터 작성 및 렌더링
-- `src/data/script.ts`의 `SCENES` 배열을 작성
-- `npm run render`로 영상 생성
+- **차트/그래프를 최우선으로 사용** — text만 나열하지 말 것
+- 스크립트에서 "절반", "두 배", "거의 동일" 등의 표현은 수치로 변환 가능
+- 근거 없는 수치를 완전히 만들어내지는 않되, 스크립트의 표현에서 합리적으로 추론 가능한 수치는 사용
 
 ---
 
 ## 디자인 원칙
 
 ### 배경
-- **순수 검정(#000) 사용 금지** — 항상 우주 느낌의 배경 적용
-- StarfieldBackground 컴포넌트가 전체 영상에 상시 적용됨
-- 별 400개, 3레이어 (먼 별 / 중간 별 / 가까운 별)로 깊이감 표현
-- 별이 위로 드리프트 + 좌우 미세 흔들림 + 반짝임 (정적이면 안 됨)
-- 어두운 남색/보라 그라데이션으로 우주 분위기
-- 각 Scene 컴포넌트의 배경은 `transparent`로 설정하여 별 배경이 보이게 함
+- **순수 검정(#000000) 단색 배경** — 아무런 장식 없음
+- 별/우주/그라데이션 사용 금지 — StarfieldBackground 사용하지 않음
+- 각 Scene 컴포넌트의 배경은 `transparent` (부모가 #000000)
 
 ### 레이아웃
 - **모든 요소 가운데 정렬** (수직/수평 모두)
 - 16:9 비율 (1920x1080)
 - 장면 전환: 페이드 인/아웃
 
+### 폰트 스타일
+- **메인 텍스트**: 굵은 대형 (82px, fontWeight 900, #ffffff)
+- **서브 텍스트**: 중형 accent 색상 (48~56px, fontWeight 700, accent color)
+- description: 작은 회색 (30~32px, #999)
+
 ### 모션 원칙 (필수)
-- **모든 장면에 움직임이 있어야 함** — 영상이므로 정적으로 보이면 안 됨
-- 각 장면은 점진적 확대(slow zoom in) 또는 점진적 축소(slow zoom out)를 기본 적용
-- scale 범위: 1.0 → 1.4 (확대) 또는 1.4 → 1.0 (축소)
-- 텍스트 등장 애니메이션과 별개로, 장면 전체 컨테이너에 적용
+- **모든 장면에 움직임이 있어야 함** — 정적 장면 금지
+- 각 장면은 점진적 확대 또는 축소를 기본 적용
+- scale 범위: 1.0 ↔ 1.15 (과하지 않게)
+- 텍스트는 일반 spring 등장 (damping 14, stiffness 90)
+- subtitle은 딜레이 후 아래에서 슬라이드 업
+- 요소별 순차 등장 + spring 애니메이션
 
-### 애니메이션/인터랙션 원칙 (필수)
-- **모든 장면에 요소별 애니메이션이 있어야 함** — 단순히 텍스트가 나타나는 것만으로는 부족
-- 필수 적용 요소:
-  - **순차 등장** — 요소가 동시에 나타나지 않고 시차를 두고 등장
-  - **방향성 있는 움직임** — translateX/Y, 화살표, 슬라이드 인 등
-  - **강조 효과** — 글로우, 펄스, 컬러 하이라이트, 밑줄 그리기
-  - **스프링 애니메이션** — 딱딱한 linear 대신 spring/easing 사용
-- 장면 타입별 권장:
-  - text: 메인 텍스트 scale spring + subtitle 아래에서 슬라이드 등장
-  - highlight: 태그가 하나씩 팝업 (spring scale)
-  - compare: 좌/우 카드 순차 슬라이드 + 화살표 모션
-  - lineGraph/barChart: 데이터 그려지는 애니메이션 + 포인트 순차 등장
-  - timeline: 단계별 순차 등장 + 연결선 드로잉
+### compare 장면 디자인
+- **타이틀 박스**: accent 색상 테두리 + 투명 배경
+- **설명 영역**: 테두리/박스/배경 없음 — 순수 텍스트만 표시
+- 화살표로 타이틀 → 설명 연결
 
-### 그래프/차트 겹침 방지 규칙
-- **데이터 값 텍스트와 축 라벨이 절대 겹치면 안 됨**
-- Y축 라벨은 차트 영역 왼쪽 바깥에 충분한 마진 확보 (최소 60px 간격)
-- 데이터 포인트 위의 값 텍스트는 인접 요소와 최소 40px 간격 유지
-- 정점/최저점 등의 특수 라벨은 데이터 값 텍스트와 다른 방향(아래쪽)에 배치
-- 첫 번째/마지막 데이터 포인트의 값은 X축 라벨과 겹치지 않도록 Y 오프셋 조정
-- **X축 첫 번째 포인트는 Y축에서 최소 40px 우측으로 이격** (Y축 라벨과 데이터 값 겹침 방지)
-- **검증:** 인접한 두 텍스트 요소의 바운딩 박스가 겹치면 위치를 재조정
+### 인포그래픽 원칙
+- **모든 장면에 가능한 한 시각 요소를 추가**
+- 차트/그래프가 가능한 장면에는 반드시 사용
+- highlight: bulletValues가 있으면 원형 프로그레스, 없으면 카드 그리드
+- **단순 텍스트 나열보다 구조화된 레이아웃 우선**
+
+### 화면 풍성도 원칙
+- **모든 장면에 부연설명(description) 추가 권장**
+- text 타입: 메인 텍스트 + subtitle + description (3단 구조)
+- highlight 타입: 메인 텍스트 + description + bulletDescriptions
+- compare 타입: 메인 텍스트 + description + 좌우 설명
+- 원칙: **인포그래픽 느낌** = "왜/뭘/어떻게"가 화면에 함께 보여야 함
+
+### 사용 금지
+- **별/우주/그라데이션 배경 금지**
+- **상단 뱃지/태그 금지**
+- **반복 아이콘 금지**
+- **장식용 소형 텍스트 금지**
+- **근거 없는 수치 금지** — 스크립트에 없는 숫자를 만들어 차트에 넣지 않음
+- **정적 장면 금지**
+- **compare 설명 영역에 테두리/박스/배경 금지**
 
 ### 텍스트 장면 워딩 규칙
 - **대본(나레이션)을 그대로 화면에 넣지 않음**
 - 대본은 구어체 → 화면 텍스트는 **프레젠테이션 스타일**로 변환
 - 핵심 키워드만 추출하여 짧고 임팩트 있게 구성
-- **문장 종결은 명사형/체언 종결** — "~한다", "~된다", "~짐" 대신 "~시작", "~누적", "~변화" 형태
-  - 예: "몸이 달라짐" → "몸의 급격한 변화 시작"
-  - 예: "습관의 차이가 쌓임" → "습관의 차이 누적"
-  - 예: "회복이 느려진다" → "회복 속도 저하"
-  - 원칙: 동사/형용사 종결 대신 **명사로 끝나는 키워드** 스타일
-- 예시:
-  - 대본: "같은 비급여 항목도 어디서 어떤 조건으로 받을 수 있는지 일일이 전화해서 비교하기가 쉽지 않은데요"
-  - 화면: "비급여 항목" (메인) + "비교가 어려움" (서브) 형태로 구조화
-
-### 화살표/연결선 가이드라인
-- 화살표 길이는 **40~60px** 범위 — 너무 길면 화면이 세로로 늘어져 보임
-- 화살표는 요소 간 연결 의미를 전달하는 용도, 장식이 아님
-- 화살표 머리 크기는 선 두께의 3~4배
-- 연결선은 글로우 효과로 시각적 존재감 부여
-
-### 사용 금지
-- **상단 뱃지/태그 금지** — 상단 카테고리 뱃지 사용하지 않음
-- **반복 아이콘 금지** — 같은 아이콘이 여러 장면에 반복되면 안 됨
-- **장식용 소형 텍스트 금지** — 읽히지 않는 작은 글씨는 넣지 않음
-- **근거 없는 수치 금지** — 스크립트에 없는 숫자를 만들어 차트에 넣지 않음
-- **정적 장면 금지** — 움직임 없이 텍스트만 고정된 장면은 허용하지 않음
-
-### 최소 폰트 사이즈 (절대 기준)
-| 요소 | 최소 사이즈 | 권장 사이즈 |
-|------|:----------:|:----------:|
-| 인트로 타이틀 | 120px | 140px |
-| 장면 메인 텍스트 | 50px | 54~64px |
-| 차트 X축/Y축 라벨 | 26px | 28~32px |
-| 차트 값 숫자 | 28px | 30~40px |
-| 범례 라벨 | 34px | 38px |
-| 범례 값 | 36px | 40px |
-| 키워드 리스트 항목 | 38px | 42px |
-
-**규칙: 화면에 표시되는 어떤 텍스트도 26px 미만이면 안 됩니다.**
-
-### 그래픽 요소 최소 사이즈
-| 요소 | 최소 사이즈 |
-|------|:----------:|
-| 도넛 차트 | 직경 360px |
-| 원형 프로그레스 | 직경 180px |
-| 막대 차트 전체 영역 | 1200x480px |
-| 라인 그래프 전체 영역 | 1150x440px |
-| 도넛 선 두께 | 36px |
-| 프로그레스 선 두께 | 12px |
+- **문장 종결은 명사형/체언 종결**
 
 ---
 
 ## 장면 타입 (SceneType)
 
 ### `text`
-- 핵심 메시지 전달 (차트 불필요한 내용)
-- **테두리/카드 없음** — 순수 텍스트만 배치
-- 메인 텍스트 (82px, 흰색) + subtitle (56px, accent 색상)
-- 레이아웃은 정형화하지 않음 — subtitle 유무, 텍스트 크기, 등장 방향이 내용에 따라 유동적
-- spring scale 등장 + subtitle은 아래에서 슬라이드 업 (딜레이)
+- 핵심 메시지 전달
+- 테두리/카드 없음 — 순수 텍스트만 배치
+- 메인 텍스트 (82px, 흰색) + subtitle (56px, accent) + description (32px, 회색)
+- 일반 spring 등장 + subtitle 딜레이 슬라이드 업
 
 ### `barChart`
 - **막대 차트** — 실제 수치 데이터가 있을 때만 사용
@@ -185,67 +176,33 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 ### `lineGraph`
 - **라인 그래프** — 시계열/추이 데이터가 있을 때만 사용
 - `lineData` 필수: `{ label, value }[]`
-- `evolvePath`로 선이 왼→오 그려지는 애니메이션
+- 선이 왼→오 그려지는 애니메이션
 
 ### `highlight`
-- 강조 메시지 (60px) + 하단 키워드 카드 그리드
-- 키워드 카드: **보라색(#6c5ce7) 테두리 + 투명 배경** + 인덱스 번호 원형 + 라벨
-- 왼쪽에서 슬라이드 인, 순차 등장, 글로우 보더 활성화 효과
-- 수치가 있으면 원형 프로그레스로, 없으면 카드 그리드로 표시
+- 강조 메시지 + 하단 키워드 카드 그리드 또는 원형 프로그레스
+- bulletValues가 있으면 원형 프로그레스 모드
+- bulletValues가 없으면 카드 그리드 모드
 
 ### `compare`
-- **좌우 비교 장면** — 두 항목을 나란히 비교할 때 사용
-- `compareData` 필수: `{ left: { title, description }, right: { title, description } }`
-- 디자인 구조:
-  - 타이틀이 글로우 보더 박스 안에 표시
-  - 박스 아래에서 화살표가 그려지며 나옴 (세로선 + 화살표 머리)
-  - 화살표 끝에 설명 텍스트가 슬라이드 업으로 등장
-- 좌측 카드 먼저 등장 → 우측 카드 딜레이 등장
-- 박스 → 화살표 → 설명 순서로 순차 애니메이션
+- **좌우 비교 장면**
+- 타이틀: accent 테두리 박스
+- 설명: 테두리 없이 순수 텍스트만 (화살표로 연결)
 
 ### `timeline`
-- **시간순 단계 표시** — 과정이나 순서를 보여줄 때 사용
-- `steps` 필수: `{ label, description }[]`
+- **시간순 단계 표시**
 - 각 단계가 연결선과 함께 순차적으로 등장
-- 연결선이 그려지는 드로잉 애니메이션
-- 현재 단계 하이라이트 펄스 효과
 
 ---
 
-## 스크립트 작성법
+## 최소 폰트 사이즈 (절대 기준)
+| 요소 | 최소 사이즈 | 권장 사이즈 |
+|------|:----------:|:----------:|
+| 장면 메인 텍스트 | 50px | 54~82px |
+| 차트 X축/Y축 라벨 | 26px | 28~32px |
+| 차트 값 숫자 | 28px | 30~40px |
+| 키워드 리스트 항목 | 38px | 42px |
 
-`src/data/script.ts`의 `SCENES` 배열을 수정합니다.
-
-```typescript
-// 수치 데이터가 있는 경우
-{
-  type: "barChart",
-  text: "메인 설명 텍스트",
-  durationInSeconds: 10,
-  accent: "#ff6b6b",
-  barData: [
-    { label: "항목", value: 85, color: "#ff6b6b" },
-  ],
-}
-
-// 기능 나열 (수치 없음)
-{
-  type: "highlight",
-  text: "메인 강조 메시지",
-  durationInSeconds: 8,
-  accent: "#4A90D9",
-  bullets: ["기능1", "기능2", "기능3"],
-}
-```
-
----
-
-## 실행 명령어
-
-```bash
-npm start          # Remotion Studio (미리보기)
-npm run render     # MP4로 렌더링 → out/video.mp4
-```
+**규칙: 화면에 표시되는 어떤 텍스트도 26px 미만이면 안 됩니다.**
 
 ---
 
@@ -258,4 +215,98 @@ npm run render     # MP4로 렌더링 → out/video.mp4
 | 강조/하이라이트 | #ffd93d, #fdcb6e, #f39c12 |
 | 정보/안내 | #6c5ce7, #a29bfe, #74b9ff |
 | 브랜드/신뢰 | #4A90D9, #5BA0E0, #3D7FC2 |
-| 위험/주의 | #fd79a8, #e056fd, #ff9ff3 |
+
+---
+
+## 캐릭터 이미지 제작 (Higgsfield MCP)
+
+### 개요
+각 장면에 캐릭터 이미지를 배치하여 영상의 몰입감과 브랜딩을 강화합니다.
+Higgsfield MCP를 통해 이미지를 생성하고, 배경을 제거한 뒤 Remotion에서 렌더링합니다.
+
+### 제작 흐름
+1. **참조 이미지 업로드**: `img/character.jpg`를 Higgsfield에 업로드 (media_id 보관)
+2. **이미지 생성**: `gpt_image_2` 모델 사용, 참조 이미지를 `image` role로 전달
+3. **배경 제거**: `remove_background` 도구로 투명 PNG 생성
+4. **다운로드**: `public/` 폴더에 저장 → Remotion `staticFile()`로 접근
+5. **배치**: Scene 데이터의 `characterImage` 필드에 파일명 지정
+
+### 참조 이미지 정보
+- **파일 위치**: `img/character.jpg`
+- **Higgsfield media_id**: `314f51de-df40-4aa2-9c94-98a9a4e92b8e`
+- ⚠️ media_id는 만료될 수 있음 — 만료 시 `img/character.jpg`를 다시 업로드하여 새 media_id 획득
+
+### 이미지 생성 규칙
+- **모델**: `gpt_image_2` (GPT Image 2) — 고정
+- **참조 이미지**: 항상 `img/character.jpg`를 reference로 전달 (캐릭터 외형 유지)
+- **비율**: `9:16` (세로형, 화면 위아래 가득 차도록)
+- **프롬프트 필수 요소**:
+  - 참조 이미지의 외형 특징 명시 (은색 메탈릭 바디, HMAD 검정 캡, 얼굴 없음 등)
+  - 포즈: 근육 자랑, 플렉스, 포인팅 등 자유로운 프리 포즈
+  - 전신샷 또는 상반신샷 다양하게 혼용
+  - `solid pure white background` (배경 제거 용이)
+- **배경 제거**: 생성 후 반드시 `remove_background` 적용
+- **병렬 생성**: 여러 장면 동시에 생성 요청하여 시간 절약
+
+### 레이아웃 규칙
+- **캐릭터 있는 장면**: 콘텐츠(텍스트/차트/카드)를 왼쪽 77% 영역에 배치 (`right: 23%`), 캐릭터는 오른쪽 (`right: 12%`, `height: 95%`)
+- **캐릭터 없는 장면**: 기존 중앙 정렬 유지 (텍스트가 화면 전체 사용)
+- **텍스트와 캐릭터는 서로 가까이** — 사이에 과도한 빈 공간 금지
+- **캐릭터는 크게** — 화면 위아래를 거의 가득 채우는 크기
+- **전신 또는 상반신(반신) 모두 가능** — 상반신만 나오는 이미지도 좋음 (5번 장면처럼)
+- **겹침 방지 필수**: 콘텐츠 영역과 캐릭터 영역이 절대 겹치면 안 됨
+  - 모든 장면 타입(text, compare, donutChart, barChart, highlight, timeline)에서 동일하게 적용
+  - 콘텐츠는 `right: 23%` 영역 안에서만 렌더링
+  - 캐릭터는 `right: 12%` position absolute로 콘텐츠 영역 바깥에 배치
+- **★ 캐릭터는 모든 장면에 필수 생성** — 영상 전체에 캐릭터가 항상 등장해야 함
+
+### 검증 체크리스트 (생성 후 필수)
+- [ ] 텍스트가 캐릭터 이미지와 겹치지 않는가?
+- [ ] 16:9 화면 안에서 전체적 균형감이 맞는가?
+- [ ] 캐릭터가 너무 세로로 길거나 찌그러지지 않았는가?
+- [ ] 차트/그래프가 잘리지 않고 콘텐츠 영역 안에 들어가는가?
+
+### 포즈 다양성 가이드
+| 장면 톤 | 추천 포즈 |
+|---------|-----------|
+| 인트로/질문 | 프론트 더블 바이셉 플렉스, 팔짱 |
+| 경고/주의 | 손가락 포인팅, 팔 뻗기 |
+| 긍정/성장 | 사이드 체스트, 모스트 머스큘러 |
+| 설명/분석 | 상반신 크로스암, 턱 괴기 |
+| 결론/마무리 | 라떼 스프레드, 승리 포즈 |
+
+**포즈 프롬프트 규칙:**
+- "근육을 자랑하는 포즈"로 넓게 지시하면 자연스럽게 다양한 결과 생성
+- 동일한 프롬프트를 여러 장면에 반복하지 않음 — 장면마다 포즈 키워드를 다르게
+- 전신샷과 상반신샷을 혼용하여 시각적 리듬감 부여
+- **상반신(반신)이 나와도 매우 좋음** — 전신만 고집하지 않기
+
+### 포즈 프롬프트 풀 (10개)
+아래에서 장면마다 돌려가며 선택. 공통 프리픽스를 붙여서 사용:
+
+**공통 프리픽스** (항상 앞에 붙임):
+```
+Same character as reference: silver metallic muscular bodybuilder with HMAD black cap covering face, no visible face, shirtless, black shorts, white sneakers.
+```
+
+| # | 포즈 프롬프트 (프리픽스 뒤에 붙임) | 샷 타입 |
+|---|---|---|
+| 1 | `Pose: back double biceps, rear view showing massive back muscles and lats spread wide, full body head to toe, solid pure white background, studio lighting` | 전신 뒷모습 |
+| 2 | `Pose: arms crossed over chest confidently, upper body shot from waist up, looking slightly to the left, solid pure white background, studio lighting` | 상반신 팔짱 |
+| 3 | `Pose: side chest pose, one arm flexed showing bicep peak, upper body shot from waist up, solid pure white background, dramatic studio lighting` | 상반신 사이드체스트 |
+| 4 | `Pose: rear lat spread, back facing camera showing V-taper and wide lats, full body head to toe, solid pure white background, studio lighting` | 전신 뒷모습 래트스프레드 |
+| 5 | `Pose: most muscular crab pose, arms tensed showing vascularity, powerful wide stance, full body head to toe, solid pure white background, dramatic studio lighting` | 전신 크랩포즈 |
+| 6 | `Pose: front relaxed stance with hands on hips, showing quad sweep and leg definition, full body head to toe, solid pure white background, studio lighting` | 전신 하체 강조 |
+| 7 | `Pose: side tricep pose, one arm behind showing tricep and shoulder, upper body shot from waist up, solid pure white background, studio lighting` | 상반신 사이드트라이셉 |
+| 8 | `Pose: front double bicep flex, powerful wide stance, full body head to toe, solid pure white background, dramatic studio lighting` | 전신 더블바이셉 |
+| 9 | `Pose: vacuum pose showing tiny waist and broad shoulders, hands behind head, upper body shot from waist up, solid pure white background, studio lighting` | 상반신 바큠포즈 |
+| 10 | `Pose: walking towards camera confidently with slight turn, showing quad definition, full body head to toe, solid pure white background, studio lighting` | 전신 워킹 |
+
+---
+
+## 실행 명령어
+
+```bash
+npm start          # Remotion Studio (미리보기)
+npm run render     # MP4로 렌더링 → out/video.mp4
+```

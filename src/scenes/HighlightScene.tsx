@@ -85,6 +85,7 @@ const KeywordCard: React.FC<{
             fontWeight: 700,
             color: "#f0f0f0",
             fontFamily: "sans-serif",
+            wordBreak: "keep-all" as const,
           }}
         >
           {label}
@@ -96,6 +97,7 @@ const KeywordCard: React.FC<{
               fontWeight: 400,
               color: "#888888",
               fontFamily: "sans-serif",
+              wordBreak: "keep-all" as const,
             }}
           >
             {desc}
@@ -109,7 +111,7 @@ const KeywordCard: React.FC<{
 export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
-  const accent = scene.accent || "#ffd93d";
+  const accent = scene.accent || "#6c5ce7";
   const bullets = scene.bullets || [];
   const bulletDescs = scene.bulletDescriptions || [];
   const hasValues = Boolean(scene.bulletValues && scene.bulletValues.length > 0);
@@ -165,6 +167,7 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           whiteSpace: "pre-line",
           maxWidth: 1200,
           marginBottom: 12,
+          wordBreak: "keep-all" as const,
         }}
       >
         {scene.text}
@@ -181,6 +184,7 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
             fontFamily: "sans-serif",
             textAlign: "center",
             marginBottom: 45,
+            wordBreak: "keep-all" as const,
           }}
         >
           {scene.description}
@@ -264,7 +268,7 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                       {Math.round(progress * 100)}%
                     </div>
                   </div>
-                  <span style={{ fontSize: 34, fontWeight: 700, color: "#e0e0e0", fontFamily: "sans-serif" }}>
+                  <span style={{ fontSize: 34, fontWeight: 700, color: "#e0e0e0", fontFamily: "sans-serif", wordBreak: "keep-all" as const }}>
                     {bullet}
                   </span>
                 </div>

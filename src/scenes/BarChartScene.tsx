@@ -4,6 +4,8 @@ import {
   useVideoConfig,
   interpolate,
   spring,
+  staticFile,
+  Img,
 } from "remotion";
 import { Scene } from "../data/script";
 
@@ -13,9 +15,10 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const accent = scene.accent || "#ffd93d";
   const barData = scene.barData || [];
   const maxValue = Math.max(...barData.map((d) => d.value));
+  const hasChar = Boolean(scene.characterImage);
 
   // 장면 전체 slow zoom out
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.4, 1.0], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.15, 1.0], {
     extrapolateRight: "clamp",
   });
 
@@ -23,9 +26,9 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     extrapolateRight: "clamp",
   });
 
-  // 차트 영역
-  const chartWidth = 1200;
-  const chartHeight = 480;
+  // 차트 영역 — 캐릭터가 있으면 작게
+  const chartWidth = hasChar ? 900 : 1200;
+  const chartHeight = 420;
   const barGap = 30;
   const barWidth =
     (chartWidth - barGap * (barData.length + 1)) / barData.length;
@@ -34,30 +37,49 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     <AbsoluteFill
       style={{
         backgroundColor: "transparent",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 60,
         transform: `scale(${sceneZoom})`,
       }}
     >
-      {/* 메인 텍스트 */}
+      {/* 콘텐츠 영역 */}
       <div
         style={{
-          opacity: titleOpacity,
-          fontSize: 54,
-          fontWeight: 700,
-          color: "#ffffff",
-          fontFamily: "sans-serif",
-          marginBottom: 50,
-          textAlign: "center",
-          lineHeight: 1.4,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: hasChar ? "23%" : 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 60,
         }}
       >
-        {scene.text}
-      </div>
+        {/* 메인 텍스트 */}
+        <div
+          style={{
+            opacity: titleOpacity,
+            fontSize: 50,
+            fontWeight: 700,
+            color: "#ffffff",
+            fontFamily: "sans-serif",
+            marginBottom: 40,
+            textAlign: "center",
+            lineHeight: 1.4,
+            wordBreak: "keep-all" as const,
+          }}
+        >
+          {scene.text}
+        </div>
 
-      {/* SVG 막대 차트 */}
-      <svg width={chartWidth} height={chartHeight} style={{ overflow: "visible" }}>
+        {scene.description && (
+          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 28, color: "#999", fontFamily: "sans-serif", textAlign: "center", marginBottom: 30, wordBreak: "keep-all" as const }}>
+            {scene.description}
+          </div>
+        )}
+
+        {/* SVG 막대 차트 */}
+        <svg width={chartWidth} height={chartHeight} style={{ overflow: "visible" }}>
         {/* Y축 그리드 */}
         {[0, 25, 50, 75, 100].map((val) => {
           const y = chartHeight - 80 - ((val / 100) * (chartHeight - 110));
@@ -177,6 +199,24 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           );
         })}
       </svg>
+      </div>
+
+      {/* 캐릭터 */}
+      {hasChar && (
+        <Img
+          src={staticFile(scene.characterImage!)}
+          style={{
+            position: "absolute",
+            right: "12%",
+            bottom: 0,
+            height: "95%",
+            opacity: interpolate(frame, [3, 15], [0, 1], { extrapolateRight: "clamp" }),
+            transform: `translateX(${interpolate(frame, [3, 15], [40, 0], { extrapolateRight: "clamp" })}px)`,
+            objectFit: "contain",
+            objectPosition: "center bottom",
+          }}
+        />
+      )}
     </AbsoluteFill>
   );
 };

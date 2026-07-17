@@ -2,13 +2,13 @@
   "mcpServers": {
     "remotion": {
       "command": "npx",
-      "args": [
-        "@remotion/mcp@latest"
-      ],
+      "args": ["@remotion/mcp@latest"],
       "disabled": false,
-      "autoApprove": [
-        "remotion-documentation"
-      ]
+      "autoApprove": ["remotion-documentation"]
+    },
+    "higgsfield": {
+      "url": "https://mcp.higgsfield.ai/mcp",
+      "disabled": false
     }
   }
 }

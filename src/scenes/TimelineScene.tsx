@@ -60,6 +60,7 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           fontFamily: "sans-serif",
           textAlign: "center",
           marginBottom: 80,
+          wordBreak: "keep-all" as const,
         }}
       >
         {scene.text}
@@ -165,6 +166,7 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                     color: isLast ? "#ffffff" : "#cccccc",
                     fontFamily: "sans-serif",
                     textAlign: "center",
+                    wordBreak: "keep-all" as const,
                   }}
                 >
                   {step.label}
@@ -181,6 +183,7 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                       textAlign: "center",
                       maxWidth: 180,
                       lineHeight: 1.4,
+                      wordBreak: "keep-all" as const,
                     }}
                   >
                     {step.description}

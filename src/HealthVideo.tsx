@@ -8,7 +8,6 @@ import { HighlightScene } from "./scenes/HighlightScene";
 import { CompareScene } from "./scenes/CompareScene";
 import { TimelineScene } from "./scenes/TimelineScene";
 import { TransitionOverlay } from "./components/TransitionOverlay";
-import { StarfieldBackground } from "./components/StarfieldBackground";
 
 export type HealthVideoProps = {
   scenes: Scene[];
@@ -20,8 +19,7 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
   let currentFrame = 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#050508" }}>
-      <StarfieldBackground />
+    <AbsoluteFill style={{ backgroundColor: "#000000" }}>
       {scenes.map((scene, index) => {
         const startFrame = currentFrame;
         const durationInFrames = Math.round(scene.durationInSeconds * fps);
