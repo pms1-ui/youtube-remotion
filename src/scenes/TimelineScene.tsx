@@ -4,6 +4,8 @@ import {
   useVideoConfig,
   interpolate,
   spring,
+  staticFile,
+  Img,
 } from "remotion";
 import { Scene } from "../data/script";
 
@@ -12,9 +14,10 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const { fps, durationInFrames } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
   const steps = scene.steps || [];
+  const hasChar = Boolean(scene.characterImage);
 
   // 장면 전체 slow zoom out
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.4, 1.0], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.1, 1.0], {
     extrapolateRight: "clamp",
   });
 
@@ -32,12 +35,24 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     <AbsoluteFill
       style={{
         backgroundColor: "transparent",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 80,
         transform: `scale(${sceneZoom})`,
       }}
     >
+      {/* 콘텐츠 영역 */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: hasChar ? "23%" : 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 80,
+        }}
+      >
       {/* 배경 글로우 */}
       <div
         style={{
@@ -54,10 +69,10 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         style={{
           opacity: titleOpacity,
           transform: `scale(${titleScale})`,
-          fontSize: 54,
-          fontWeight: 800,
+          fontSize: 62,
+          fontWeight: 700,
           color: "#ffffff",
-          fontFamily: "sans-serif",
+          fontFamily: "SCDream",
           textAlign: "center",
           marginBottom: 80,
           wordBreak: "keep-all" as const,
@@ -151,7 +166,7 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                       fontSize: 26,
                       fontWeight: 900,
                       color: isLast ? "#0a0a0a" : accent,
-                      fontFamily: "sans-serif",
+                      fontFamily: "SCDream",
                     }}
                   >
                     {i + 1}
@@ -161,10 +176,10 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 {/* 라벨 */}
                 <div
                   style={{
-                    fontSize: 34,
-                    fontWeight: 800,
+                    fontSize: 38,
+                    fontWeight: 700,
                     color: isLast ? "#ffffff" : "#cccccc",
-                    fontFamily: "sans-serif",
+                    fontFamily: "SCDream",
                     textAlign: "center",
                     wordBreak: "keep-all" as const,
                   }}
@@ -176,10 +191,10 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 {step.description && (
                   <div
                     style={{
-                      fontSize: 26,
+                      fontSize: 30,
                       fontWeight: 500,
                       color: "#999999",
-                      fontFamily: "sans-serif",
+                      fontFamily: "SCDream",
                       textAlign: "center",
                       maxWidth: 180,
                       lineHeight: 1.4,
@@ -210,6 +225,24 @@ export const TimelineScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           );
         })}
       </div>
+      </div>
+
+      {/* 캐릭터 */}
+      {hasChar && (
+        <Img
+          src={staticFile(scene.characterImage!)}
+          style={{
+            position: "absolute",
+            right: "12%",
+            bottom: 0,
+            height: "95%",
+            opacity: interpolate(frame, [3, 15], [0, 1], { extrapolateRight: "clamp" }),
+            transform: `translateX(${interpolate(frame, [3, 15], [40, 0], { extrapolateRight: "clamp" })}px)`,
+            objectFit: "contain",
+            objectPosition: "center bottom",
+          }}
+        />
+      )}
     </AbsoluteFill>
   );
 };

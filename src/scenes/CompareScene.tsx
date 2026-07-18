@@ -67,7 +67,7 @@ const CompareCard: React.FC<{
           boxShadow: `0 0 ${20 * glowPulse}px ${color}30`,
         }}
       >
-        <span style={{ fontSize: 38, fontWeight: 700, color: "#f0f0f0", fontFamily: "sans-serif", wordBreak: "keep-all" as const }}>
+        <span style={{ fontSize: 44, fontWeight: 700, color: "#f0f0f0", fontFamily: "SCDream", wordBreak: "keep-all" as const }}>
           {title}
         </span>
       </div>
@@ -80,7 +80,7 @@ const CompareCard: React.FC<{
       </div>
 
       <div style={{ opacity: textOpacity, transform: `translateY(${textSlide}px)`, marginTop: 16, padding: "16px 0" }}>
-        <span style={{ fontSize: 34, fontWeight: 700, color: "#e8e8e8", fontFamily: "sans-serif", textAlign: "center", display: "block", lineHeight: 1.5, whiteSpace: "pre-line", wordBreak: "keep-all" as const }}>
+        <span style={{ fontSize: 38, fontWeight: 500, color: "#e8e8e8", fontFamily: "SCDream", textAlign: "center", display: "block", lineHeight: 1.5, whiteSpace: "pre-line", wordBreak: "keep-all" as const }}>
           {description}
         </span>
       </div>
@@ -95,7 +95,7 @@ export const CompareScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const compareData = scene.compareData;
   const hasChar = Boolean(scene.characterImage);
 
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.15], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.1], {
     extrapolateRight: "clamp",
   });
 
@@ -122,12 +122,12 @@ export const CompareScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           padding: 60,
         }}
       >
-        <div style={{ opacity: titleOpacity, transform: `scale(${titleScale})`, fontSize: 54, fontWeight: 800, color: "#ffffff", fontFamily: "sans-serif", textAlign: "center", marginBottom: 50, wordBreak: "keep-all" as const }}>
+        <div style={{ opacity: titleOpacity, transform: `scale(${titleScale})`, fontSize: 62, fontWeight: 700, color: "#ffffff", fontFamily: "SCDream", textAlign: "center", marginBottom: 50, wordBreak: "keep-all" as const }}>
           {scene.text}
         </div>
 
         {scene.description && (
-          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 28, fontWeight: 400, color: "#999", fontFamily: "sans-serif", textAlign: "center", marginBottom: 40, wordBreak: "keep-all" as const }}>
+          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 32, fontWeight: 500, color: "#999", fontFamily: "SCDream", textAlign: "center", marginBottom: 40, wordBreak: "keep-all" as const }}>
             {scene.description}
           </div>
         )}

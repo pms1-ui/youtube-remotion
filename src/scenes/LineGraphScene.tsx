@@ -16,7 +16,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const maxValue = Math.max(...lineData.map((d) => d.value));
 
   // 장면 전체 slow zoom in
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.4], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.1], {
     extrapolateRight: "clamp",
   });
 
@@ -91,7 +91,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           fontSize: 50,
           fontWeight: 700,
           color: "#ffffff",
-          fontFamily: "sans-serif",
+          fontFamily: "SCDream",
           marginBottom: 50,
           textAlign: "center",
           lineHeight: 1.5,
@@ -122,7 +122,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 y={y + 6}
                 fill="#555"
                 fontSize={22}
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="end"
               >
                 {val}
@@ -201,7 +201,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 fill="#ffffff"
                 fontSize={30}
                 fontWeight="bold"
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="middle"
                 opacity={labelOpacity}
               >
@@ -214,7 +214,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 fill="#bbb"
                 fontSize={28}
                 fontWeight="600"
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="middle"
                 opacity={labelOpacity}
               >
@@ -251,7 +251,7 @@ export const LineGraphScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 fill="#00cec9"
                 fontSize={22}
                 fontWeight="bold"
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="middle"
               >
                 ▲ 정점

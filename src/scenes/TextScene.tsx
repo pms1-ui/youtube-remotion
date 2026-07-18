@@ -14,12 +14,10 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const { fps, durationInFrames } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
 
-  // 장면 전체 slow zoom out (1.15 → 1.0)
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.15, 1.0], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.1, 1.0], {
     extrapolateRight: "clamp",
   });
 
-  // 메인 텍스트 — 일반 spring 등장
   const textOpacity = interpolate(frame, [8, 22], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -29,23 +27,19 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     config: { damping: 14, stiffness: 90 },
   });
 
-  // subtitle — 딜레이 등장, 아래에서 슬라이드 업
-  const subDelay = 30;
-  const subOpacity = interpolate(frame, [subDelay, subDelay + 15], [0, 1], {
+  const subDelay = 25;
+  const subOpacity = interpolate(frame, [subDelay, subDelay + 12], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const subSlide = interpolate(frame, [subDelay, subDelay + 15], [30, 0], {
+  const subSlide = interpolate(frame, [subDelay, subDelay + 12], [25, 0], {
     extrapolateRight: "clamp",
   });
 
+  // subtitle이 없으면 description을 subtitle 위치에 표시
+  const subText = scene.subtitle || scene.description;
+
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: "transparent",
-        transform: `scale(${sceneZoom})`,
-      }}
-    >
-      {/* 텍스트 영역 — 항상 화면 중앙에 모여있는 느낌 */}
+    <AbsoluteFill style={{ backgroundColor: "transparent", transform: `scale(${sceneZoom})` }}>
       <div
         style={{
           position: "absolute",
@@ -60,16 +54,16 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           padding: "80px 60px",
         }}
       >
-        {/* 메인 텍스트 */}
+        {/* 메인 텍스트 — 큰 흰색 */}
         <div
           style={{
             opacity: textOpacity,
             transform: `scale(${textScale})`,
-            fontSize: 82,
-            fontWeight: 900,
+            fontSize: 96,
+            fontWeight: 700,
             color: "#ffffff",
-            fontFamily: "sans-serif",
-            lineHeight: 1.4,
+            fontFamily: "SCDream",
+            lineHeight: 1.3,
             whiteSpace: "pre-line",
             textAlign: "center",
             maxWidth: 900,
@@ -79,49 +73,27 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           {scene.text}
         </div>
 
-        {/* subtitle — accent 색상 */}
-        {scene.subtitle && (
+        {/* 서브 텍스트 — accent 색상 (subtitle 또는 description 중 하나만) */}
+        {subText && (
           <div
             style={{
               opacity: subOpacity,
               transform: `translateY(${subSlide}px)`,
-              fontSize: 56,
-              fontWeight: 700,
+              fontSize: 52,
+              fontWeight: 500,
               color: accent,
-              fontFamily: "sans-serif",
-              marginTop: 30,
+              fontFamily: "SCDream",
+              marginTop: 28,
               textAlign: "center",
               wordBreak: "keep-all" as const,
+              whiteSpace: "pre-line",
             }}
           >
-            {scene.subtitle}
-          </div>
-        )}
-
-        {/* description */}
-        {scene.description && (
-          <div
-            style={{
-              opacity: interpolate(frame, [subDelay + 12, subDelay + 24], [0, 1], {
-                extrapolateRight: "clamp",
-              }),
-              transform: `translateY(${interpolate(frame, [subDelay + 12, subDelay + 24], [15, 0], { extrapolateRight: "clamp" })}px)`,
-              fontSize: 32,
-              fontWeight: 400,
-              color: "#999999",
-              fontFamily: "sans-serif",
-              marginTop: 24,
-              textAlign: "center",
-              maxWidth: 800,
-              wordBreak: "keep-all" as const,
-            }}
-          >
-            {scene.description}
+            {subText}
           </div>
         )}
       </div>
 
-      {/* 캐릭터 이미지 — 텍스트 바로 옆, 가까이 배치 */}
       {scene.characterImage && (
         <Img
           src={staticFile(scene.characterImage)}
@@ -130,9 +102,7 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
             right: "12%",
             bottom: 0,
             height: "95%",
-            opacity: interpolate(frame, [3, 15], [0, 1], {
-              extrapolateRight: "clamp",
-            }),
+            opacity: interpolate(frame, [3, 15], [0, 1], { extrapolateRight: "clamp" }),
             transform: `translateX(${interpolate(frame, [3, 15], [40, 0], { extrapolateRight: "clamp" })}px)`,
             objectFit: "contain",
             objectPosition: "center bottom",

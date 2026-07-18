@@ -46,12 +46,12 @@ export const DonutChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         }}
       >
         {/* 타이틀 */}
-        <div style={{ opacity: titleOpacity, fontSize: 50, fontWeight: 700, color: "#ffffff", fontFamily: "sans-serif", marginBottom: 40, textAlign: "center", lineHeight: 1.4, wordBreak: "keep-all" as const }}>
+        <div style={{ opacity: titleOpacity, fontSize: 58, fontWeight: 700, color: "#ffffff", fontFamily: "SCDream", marginBottom: 40, textAlign: "center", lineHeight: 1.4, wordBreak: "keep-all" as const }}>
           {scene.text}
         </div>
 
         {scene.description && (
-          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 28, color: "#999", fontFamily: "sans-serif", textAlign: "center", marginBottom: 30, wordBreak: "keep-all" as const }}>
+          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 32, color: "#999", fontFamily: "SCDream", textAlign: "center", marginBottom: 30, wordBreak: "keep-all" as const }}>
             {scene.description}
           </div>
         )}
@@ -77,7 +77,7 @@ export const DonutChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
               })}
             </svg>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-              <div style={{ fontSize: 50, fontWeight: 900, color: "#ffffff", fontFamily: "sans-serif" }}>{donutData[0]?.value}%</div>
+              <div style={{ fontSize: 58, fontWeight: 700, color: "#ffffff", fontFamily: "SCDream" }}>{donutData[0]?.value}%</div>
             </div>
           </div>
 
@@ -90,8 +90,8 @@ export const DonutChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
               return (
                 <div key={i} style={{ opacity: legendOpacity, display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ width: 20, height: 20, borderRadius: 6, backgroundColor: item.color, flexShrink: 0 }} />
-                  <span style={{ fontSize: 32, fontWeight: 600, color: "#e0e0e0", fontFamily: "sans-serif", wordBreak: "keep-all" as const }}>{item.label}</span>
-                  <span style={{ fontSize: 34, fontWeight: 800, color: item.color, fontFamily: "sans-serif" }}>{Math.round(countUp)}%</span>
+                  <span style={{ fontSize: 36, fontWeight: 500, color: "#e0e0e0", fontFamily: "SCDream", wordBreak: "keep-all" as const }}>{item.label}</span>
+                  <span style={{ fontSize: 38, fontWeight: 700, color: item.color, fontFamily: "SCDream" }}>{Math.round(countUp)}%</span>
                 </div>
               );
             })}

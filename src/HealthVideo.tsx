@@ -7,6 +7,8 @@ import { LineGraphScene } from "./scenes/LineGraphScene";
 import { HighlightScene } from "./scenes/HighlightScene";
 import { CompareScene } from "./scenes/CompareScene";
 import { TimelineScene } from "./scenes/TimelineScene";
+import { IconListScene } from "./scenes/IconListScene";
+import { SplitFactScene } from "./scenes/SplitFactScene";
 import { TransitionOverlay } from "./components/TransitionOverlay";
 
 export type HealthVideoProps = {
@@ -40,6 +42,8 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
             {scene.type === "highlight" && <HighlightScene scene={scene} />}
             {scene.type === "compare" && <CompareScene scene={scene} />}
             {scene.type === "timeline" && <TimelineScene scene={scene} />}
+            {scene.type === "iconList" && <IconListScene scene={scene} />}
+            {scene.type === "splitFact" && <SplitFactScene scene={scene} />}
           </Sequence>
         );
       })}

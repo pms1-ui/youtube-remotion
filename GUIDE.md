@@ -6,6 +6,35 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 
 ---
 
+## ★ 포맷 확인 규칙 (필수)
+- 사용자가 영상 제작을 요청할 때 **롱폼/숏폼을 명시하지 않으면 반드시 물어볼 것**
+- "롱폼 (16:9 유튜브)인가요, 숏폼 (9:16 쇼츠/릴스)인가요?"
+- 명시된 경우 바로 진행
+
+---
+
+## 영상 포맷
+
+### 롱폼 (16:9) — 유튜브 본 영상
+- Composition ID: `HealthVideo`
+- 해상도: 1920×1080
+- 스크립트 파일: `src/data/script.ts`
+- **캐릭터 이미지 사용** (10개 순환)
+- 장면당 10초
+- 렌더 명령: `npx remotion render src/index.ts HealthVideo out/파일명.mp4`
+
+### 숏폼 (9:16) — 쇼츠/릴스
+- Composition ID: `ShortVideo`
+- 해상도: 1080×1920
+- 스크립트 파일: `src/data/shorts-script.ts`
+- **캐릭터 이미지 사용하지 않음** — 콘텐츠가 화면 전체(중앙) 사용
+- 장면당 5~7초 (숏폼은 빠른 전환)
+- 렌더 명령: `npx remotion render src/index.ts ShortVideo out/파일명.mp4`
+- 텍스트 크기: 롱폼과 동일하게 유지 (세로 화면이라 자연스럽게 큼)
+- 총 영상 길이: 30~60초 권장 (쇼츠 제한)
+
+---
+
 ## 제작 프로세스 (최적 워크플로우)
 
 ### ★ 병렬 처리로 속도 최적화
@@ -108,17 +137,36 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 - 장면 전환: 페이드 인/아웃
 
 ### 폰트 스타일
-- **메인 텍스트**: 굵은 대형 (82px, fontWeight 900, #ffffff)
-- **서브 텍스트**: 중형 accent 색상 (48~56px, fontWeight 700, accent color)
-- description: 작은 회색 (30~32px, #999)
+- **폰트**: `SCDream` (에스코어 드림) — 모든 장면에서 통일
+  - 파일: `public/fonts/SCDream5.otf` (Medium), `SCDream7.otf` (ExtraBold)
+  - CSS: `@font-face`로 Root.tsx에서 `staticFile()` 경로로 등록
+- **굵은 텍스트 (메인 타이틀, subtitle)**: `fontWeight: 700` (SCDream 7 ExtraBold)
+- **일반 텍스트 (description, 범례, 카드 설명)**: `fontWeight: 500` (SCDream 5 Medium)
+- 크기 기준:
+  - 메인 타이틀 (text 장면): 96px
+  - 메인 타이틀 (chart/highlight): 58~70px
+  - subtitle: 64px
+  - description: 32~36px
+  - 카드 라벨: 44px
+  - 카드 부연: 26px
+  - 차트 범례/라벨: 36~38px
+
+### description 줄바꿈 규칙
+- description에 2가지 이상의 정보를 넣을 때는 반드시 `\n`으로 줄바꿈 분리
+- 한 줄에 서로 다른 성격의 정보를 `|`나 `,`로 이어붙이지 않음
+- 모든 description 렌더링 요소에 `whiteSpace: "pre-line"` 적용 필수
+- 예시:
+  - ❌ "100% 유청 가성비 최강 | 트렌드 제품 담기 시 추가 7%"
+  - ✅ "100% 유청 가성비 최강\n트렌드 제품 담기 시 추가 7% 할인"
 
 ### 모션 원칙 (필수)
 - **모든 장면에 움직임이 있어야 함** — 정적 장면 금지
 - 각 장면은 점진적 확대 또는 축소를 기본 적용
-- scale 범위: 1.0 ↔ 1.15 (과하지 않게)
+- scale 범위: 1.0 ↔ 1.05 (미세하고 느리게, 과하지 않게)
 - 텍스트는 일반 spring 등장 (damping 14, stiffness 90)
 - subtitle은 딜레이 후 아래에서 슬라이드 업
 - 요소별 순차 등장 + spring 애니메이션
+- **장면 최소 길이: 5초** (3초 이하 금지, 읽을 시간 확보)
 
 ### compare 장면 디자인
 - **타이틀 박스**: accent 색상 테두리 + 투명 배경
@@ -265,6 +313,22 @@ Higgsfield MCP를 통해 이미지를 생성하고, 배경을 제거한 뒤 Remo
 - [ ] 16:9 화면 안에서 전체적 균형감이 맞는가?
 - [ ] 캐릭터가 너무 세로로 길거나 찌그러지지 않았는가?
 - [ ] 차트/그래프가 잘리지 않고 콘텐츠 영역 안에 들어가는가?
+- [ ] **highlight 카드 그리드**: 캐릭터가 있으면 최대 2열 (`hasChar ? repeat(2, auto)`)
+- [ ] 콘텐츠 영역에 `overflow: hidden` 또는 `maxWidth: 100%` 적용됐는가?
+
+### 겹침 발생 원인과 해결
+- **원인**: highlight 타입에서 카드가 3열(`repeat(3, auto)`)로 배치되면 콘텐츠 영역(77%)을 초과하여 캐릭터 영역으로 침범
+- **해결**: 캐릭터가 있는 장면(`hasChar`)에서는 카드 그리드를 최대 2열로 강제 제한
+- **예방**: 모든 콘텐츠 컨테이너에 `maxWidth: 100%`, `overflow: hidden` 적용
+
+### 캐릭터 이미지 재사용 전략 (효율화)
+- **핵심 원칙**: 장면 수만큼 이미지를 매번 생성하지 않음
+- **방법**: 10개의 다양한 포즈 이미지를 선생성하고, 장면에 순환 배정
+  - 포즈 풀에서 10개를 골라 생성 → 배경 제거 → `public/char-01.png` ~ `char-10.png`
+  - 장면 N번에는 `char-0${((N-1) % 10) + 1}.png` 배정 (1~10 순환)
+- **구현**: script.ts 작성 시 characterImage를 순환 패턴으로 자동 배정
+- **장점**: 생성 시간 80% 절약, 크레딧 절약, 포즈 다양성은 유지
+- **파일 네이밍**: `public/char-01.png` ~ `char-10.png` (고정 풀, 10개)
 
 ### 포즈 다양성 가이드
 | 장면 톤 | 추천 포즈 |
@@ -301,6 +365,11 @@ Same character as reference: silver metallic muscular bodybuilder with HMAD blac
 | 8 | `Pose: front double bicep flex, powerful wide stance, full body head to toe, solid pure white background, dramatic studio lighting` | 전신 더블바이셉 |
 | 9 | `Pose: vacuum pose showing tiny waist and broad shoulders, hands behind head, upper body shot from waist up, solid pure white background, studio lighting` | 상반신 바큠포즈 |
 | 10 | `Pose: walking towards camera confidently with slight turn, showing quad definition, full body head to toe, solid pure white background, studio lighting` | 전신 워킹 |
+| 11 | `Pose: rear view looking over shoulder, showing thick traps and rear delts, upper body shot from waist up, solid pure white background, studio lighting` | 상반신 뒤돌아보기 |
+| 12 | `Pose: seated on invisible bench leaning forward, forearms on knees, showing upper back thickness, upper body shot, solid pure white background, studio lighting` | 상반신 앉은자세 |
+| 13 | `Pose: one arm raised overhead showing serratus and obliques, other hand on hip, full body head to toe, solid pure white background, studio lighting` | 전신 한팔올리기 |
+| 14 | `Pose: lunging forward showing quad separation and hamstring, dynamic athletic stance, full body head to toe, solid pure white background, studio lighting` | 전신 런지 하체 |
+| 15 | `Pose: hands clasped behind back pulling shoulders open, showing full chest and front delt, upper body shot from waist up, solid pure white background, studio lighting` | 상반신 가슴열기 |
 
 ---
 

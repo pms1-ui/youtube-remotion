@@ -4,6 +4,8 @@ import {
   useVideoConfig,
   interpolate,
   spring,
+  staticFile,
+  Img,
 } from "remotion";
 import { Scene } from "../data/script";
 
@@ -70,7 +72,7 @@ const KeywordCard: React.FC<{
             fontSize: 20,
             fontWeight: 900,
             color: "#6c5ce7",
-            fontFamily: "sans-serif",
+            fontFamily: "SCDream",
           }}
         >
           {index + 1}
@@ -81,10 +83,10 @@ const KeywordCard: React.FC<{
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <span
           style={{
-            fontSize: 38,
+            fontSize: 44,
             fontWeight: 700,
             color: "#f0f0f0",
-            fontFamily: "sans-serif",
+            fontFamily: "SCDream",
             wordBreak: "keep-all" as const,
           }}
         >
@@ -93,10 +95,10 @@ const KeywordCard: React.FC<{
         {desc && (
           <span
             style={{
-              fontSize: 22,
-              fontWeight: 400,
+              fontSize: 26,
+              fontWeight: 500,
               color: "#888888",
-              fontFamily: "sans-serif",
+              fontFamily: "SCDream",
               wordBreak: "keep-all" as const,
             }}
           >
@@ -110,14 +112,16 @@ const KeywordCard: React.FC<{
 
 export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
   const bullets = scene.bullets || [];
   const bulletDescs = scene.bulletDescriptions || [];
   const hasValues = Boolean(scene.bulletValues && scene.bulletValues.length > 0);
+  const hasChar = Boolean(scene.characterImage);
+  const isVertical = width < 1200;
 
   // 장면 전체 slow zoom in
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.4], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.1], {
     extrapolateRight: "clamp",
   });
 
@@ -135,12 +139,24 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     <AbsoluteFill
       style={{
         backgroundColor: "transparent",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 80,
         transform: `scale(${sceneZoom})`,
       }}
     >
+      {/* 콘텐츠 영역 */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: hasChar ? "23%" : 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 80,
+        }}
+      >
       {/* 배경 글로우 */}
       <div
         style={{
@@ -158,10 +174,10 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         style={{
           opacity: titleOpacity,
           transform: `scale(${titleScale})`,
-          fontSize: 60,
-          fontWeight: 900,
+          fontSize: 70,
+          fontWeight: 700,
           color: "#ffffff",
-          fontFamily: "sans-serif",
+          fontFamily: "SCDream",
           textAlign: "center",
           lineHeight: 1.5,
           whiteSpace: "pre-line",
@@ -178,13 +194,14 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         <div
           style={{
             opacity: interpolate(frame, [18, 32], [0, 1], { extrapolateRight: "clamp" }),
-            fontSize: 30,
-            fontWeight: 400,
+            fontSize: 34,
+            fontWeight: 500,
             color: "#888888",
-            fontFamily: "sans-serif",
+            fontFamily: "SCDream",
             textAlign: "center",
             marginBottom: 45,
             wordBreak: "keep-all" as const,
+            whiteSpace: "pre-line",
           }}
         >
           {scene.description}
@@ -197,10 +214,12 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: bullets.length <= 3 ? `repeat(${bullets.length}, auto)` : "repeat(2, auto)",
+            gridTemplateColumns: isVertical ? "1fr" : (hasChar ? "repeat(2, auto)" : (bullets.length <= 3 ? `repeat(${bullets.length}, auto)` : "repeat(2, auto)")),
             gap: 18,
             justifyContent: "center",
             alignItems: "center",
+            maxWidth: "100%",
+            overflow: "hidden",
           }}
         >
           {bullets.map((bullet, i) => (
@@ -262,13 +281,13 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                       style={{
                         position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
                         display: "flex", justifyContent: "center", alignItems: "center",
-                        fontSize: 38, fontWeight: 900, color: accent, fontFamily: "sans-serif",
+                        fontSize: 38, fontWeight: 900, color: accent, fontFamily: "SCDream",
                       }}
                     >
                       {Math.round(progress * 100)}%
                     </div>
                   </div>
-                  <span style={{ fontSize: 34, fontWeight: 700, color: "#e0e0e0", fontFamily: "sans-serif", wordBreak: "keep-all" as const }}>
+                  <span style={{ fontSize: 34, fontWeight: 700, color: "#e0e0e0", fontFamily: "SCDream", wordBreak: "keep-all" as const }}>
                     {bullet}
                   </span>
                 </div>
@@ -276,6 +295,24 @@ export const HighlightScene: React.FC<{ scene: Scene }> = ({ scene }) => {
             );
           })}
         </div>
+      )}
+      </div>
+
+      {/* 캐릭터 */}
+      {hasChar && (
+        <Img
+          src={staticFile(scene.characterImage!)}
+          style={{
+            position: "absolute",
+            right: "12%",
+            bottom: 0,
+            height: "95%",
+            opacity: interpolate(frame, [3, 15], [0, 1], { extrapolateRight: "clamp" }),
+            transform: `translateX(${interpolate(frame, [3, 15], [40, 0], { extrapolateRight: "clamp" })}px)`,
+            objectFit: "contain",
+            objectPosition: "center bottom",
+          }}
+        />
       )}
     </AbsoluteFill>
   );

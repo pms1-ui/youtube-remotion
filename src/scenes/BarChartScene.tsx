@@ -11,14 +11,15 @@ import { Scene } from "../data/script";
 
 export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const accent = scene.accent || "#ffd93d";
   const barData = scene.barData || [];
   const maxValue = Math.max(...barData.map((d) => d.value));
   const hasChar = Boolean(scene.characterImage);
+  const isVertical = width < 1200; // 숏폼 감지
 
   // 장면 전체 slow zoom out
-  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.15, 1.0], {
+  const sceneZoom = interpolate(frame, [0, durationInFrames], [1.1, 1.0], {
     extrapolateRight: "clamp",
   });
 
@@ -26,9 +27,9 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     extrapolateRight: "clamp",
   });
 
-  // 차트 영역 — 캐릭터가 있으면 작게
-  const chartWidth = hasChar ? 900 : 1200;
-  const chartHeight = 420;
+  // 차트 영역 — 캐릭터가 있으면 작게, 숏폼이면 더 작게
+  const chartWidth = isVertical ? 700 : (hasChar ? 900 : 1200);
+  const chartHeight = isVertical ? 350 : 420;
   const barGap = 30;
   const barWidth =
     (chartWidth - barGap * (barData.length + 1)) / barData.length;
@@ -59,10 +60,10 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         <div
           style={{
             opacity: titleOpacity,
-            fontSize: 50,
+            fontSize: 58,
             fontWeight: 700,
             color: "#ffffff",
-            fontFamily: "sans-serif",
+            fontFamily: "SCDream",
             marginBottom: 40,
             textAlign: "center",
             lineHeight: 1.4,
@@ -73,7 +74,7 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         </div>
 
         {scene.description && (
-          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 28, color: "#999", fontFamily: "sans-serif", textAlign: "center", marginBottom: 30, wordBreak: "keep-all" as const }}>
+          <div style={{ opacity: interpolate(frame, [12, 24], [0, 1], { extrapolateRight: "clamp" }), fontSize: 32, color: "#999", fontFamily: "SCDream", textAlign: "center", marginBottom: 30, wordBreak: "keep-all" as const }}>
             {scene.description}
           </div>
         )}
@@ -98,7 +99,7 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 y={y + 7}
                 fill="#777"
                 fontSize={28}
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="end"
               >
                 {val}
@@ -176,7 +177,7 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 fill={item.color}
                 fontSize={34}
                 fontWeight="bold"
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="middle"
                 opacity={labelOpacity}
               >
@@ -189,7 +190,7 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
                 fill="#dddddd"
                 fontSize={32}
                 fontWeight="600"
-                fontFamily="sans-serif"
+                fontFamily="SCDream"
                 textAnchor="middle"
                 opacity={labelOpacity}
               >
