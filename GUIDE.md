@@ -32,6 +32,11 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 - 렌더 명령: `npx remotion render src/index.ts ShortVideo out/파일명.mp4`
 - 텍스트 크기: 롱폼과 동일하게 유지 (세로 화면이라 자연스럽게 큼)
 - 총 영상 길이: 30~60초 권장 (쇼츠 제한)
+- **레이아웃 최적화 (자동 적용)**:
+  - BarChart: 숏폼(`width < 1200`) 감지 시 차트 너비 700px로 축소 (좌우 여백 확보)
+  - Highlight 카드: 숏폼에서 그리드를 강제 1열(`1fr`) 배치 (텍스트 끊김 방지)
+  - 감지 방법: `const isVertical = width < 1200;` (useVideoConfig의 width 활용)
+  - 롱폼(1920px)에서는 기존 레이아웃 유지, 숏폼(1080px)에서만 적용
 
 ---
 
