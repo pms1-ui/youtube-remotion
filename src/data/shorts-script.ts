@@ -1,14 +1,29 @@
 import { Scene } from "./script";
 
 export const SHORTS_SCENES: Scene[] = [
-  // 앤더슨 스쿼트 숏폼 (캐릭터 없음)
-  { type: "text", text: "앤더슨 스쿼트", subtitle: "하체 정체기 해결", durationInSeconds: 5, accent: "#6c5ce7" },
-  { type: "splitFact", text: "일반 스쿼트 vs 앤더슨", durationInSeconds: 7, accent: "#4A90D9", compareData: { left: { title: "일반 스쿼트", description: "내려갈 때 반동으로\n올라옴" }, right: { title: "앤더슨", description: "최하단 정지 상태에서\n순수 근력으로 시작" } } },
-  { type: "text", text: "반동을\n강제 압수당한 상태", subtitle: "순수 근육 힘으로만 밀어올림", durationInSeconds: 6, accent: "#e17055" },
-  { type: "barChart", text: "대퇴사두근 동원율", description: "정지 상태 출발 시 초기 근육 동원율", durationInSeconds: 7, accent: "#00b894", barData: [{ label: "일반 스쿼트", value: 70, color: "#74b9ff" }, { label: "앤더슨 스쿼트", value: 100, color: "#00b894" }] },
-  { type: "text", text: "+30% 이상\n폭발적 증가", subtitle: "대퇴사두근 초기 동원율", durationInSeconds: 5, accent: "#00b894" },
-  { type: "iconList", text: "앤더슨 스쿼트 장점", durationInSeconds: 7, accent: "#4A90D9", bullets: ["하체 정체기 돌파", "순수 스트렝스 강화", "중추신경계 자극", "순간 파워 +40%"] },
-  { type: "splitFact", text: "관절 부담", durationInSeconds: 6, accent: "#00b894", compareData: { left: { title: "무릎 반동 X", description: "무릎 관절 부담\n오히려 감소" }, right: { title: "허벅지 집중", description: "근육만\n정확하게 타격" } } },
-  { type: "highlight", text: "주의사항", description: "초보자 안전 가이드", durationInSeconds: 7, accent: "#e17055", bullets: ["무릎 대신 허리 부담 가능", "하체 근력 충분 시에만", "중량은 점진적으로"], bulletDescriptions: ["허리 보호 필수", "기초 근력 선행", "무리하지 않기"] },
-  { type: "text", text: "하체 정체기?\n앤더슨 스쿼트", subtitle: "순수 스트렝스의 끝판왕", durationInSeconds: 5, accent: "#6c5ce7" },
+  // 머신 vs 프리웨이트 숏폼 (텍스트 타입 미사용, 모든 장면 시각적 타입)
+
+  // 1. 고정관념 vs 현실
+  { type: "splitFact", text: "근육 성장의 정석?", durationInSeconds: 6, accent: "#6c5ce7", compareData: { left: { title: "고정관념", description: "프리웨이트만이\n정석이다" }, right: { title: "현실", description: "머신이 고립에선\n훨씬 우위" } } },
+
+  // 2. 프리웨이트의 한계
+  { type: "iconList", text: "프리웨이트의 문제점", durationInSeconds: 6, accent: "#e17055", bullets: ["근육 안 붙고 노동만", "주변 근육 과다 개입", "자세 흔들림으로 분산"] },
+
+  // 3. 머신의 장점 — 고립 극대화
+  { type: "highlight", text: "머신의 핵심 강점", description: "몸통·코어·자세를 고정", durationInSeconds: 7, accent: "#00b894", bullets: ["코어 고정", "주변 근육 차단", "타겟 근육 집중", "궤적 최적화"], bulletDescriptions: ["몸통 흔들림 제거", "팔·어깨 간섭 제거", "자극 정확도 극대화", "파나타 등 설계된 동선"] },
+
+  // 4. 고립도 비교 — 막대 차트
+  { type: "barChart", text: "타겟 근육 고립도", description: "등 운동 시 광배근 자극 비율", durationInSeconds: 7, accent: "#4A90D9", barData: [{ label: "프리웨이트", value: 65, color: "#e17055" }, { label: "머신", value: 95, color: "#00b894" }] },
+
+  // 5. 팩폭 — 필 히스 사례
+  { type: "splitFact", text: "올림피아 챔피언의 진실", durationInSeconds: 7, accent: "#4A90D9", compareData: { left: { title: "필 히스", description: "역사상 가장\n멋진 몸" }, right: { title: "훈련 방식", description: "커리어 대부분\n머신으로 제작" } } },
+
+  // 6. 근비대의 본질 — 도넛
+  { type: "donutChart", text: "근비대의 본질", description: "머신이냐 프리웨이트냐가 아님\n핵심은 지속적 긴장감", durationInSeconds: 7, accent: "#6c5ce7", donutData: [{ label: "지속적 긴장감", value: 60, color: "#6c5ce7" }, { label: "충분한 파괴", value: 40, color: "#a29bfe" }] },
+
+  // 7. 결론 전략
+  { type: "iconList", text: "실전 적용 전략", durationInSeconds: 7, accent: "#00b894", bullets: ["고립 필요 → 머신 우선", "근육에 긴장감 유지", "잘 찢어냈는지가 핵심", "도구보다 자극이 본질"] },
+
+  // 8. 마무리
+  { type: "compare", text: "최종 결론", description: "도구가 아닌 자극의 질", durationInSeconds: 5, accent: "#6c5ce7", compareData: { left: { title: "프리웨이트", description: "코어·협응\n스트렝스" }, right: { title: "머신", description: "고립·집중\n근비대 극대화" } } },
 ];
