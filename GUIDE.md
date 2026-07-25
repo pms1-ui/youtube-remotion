@@ -285,21 +285,26 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 Higgsfield MCP를 통해 이미지를 생성하고, 배경을 제거한 뒤 Remotion에서 렌더링합니다.
 
 ### 제작 흐름
-1. **참조 이미지 업로드**: `img/character.jpg`를 Higgsfield에 업로드 (media_id 보관)
-2. **이미지 생성**: `gpt_image_2` 모델 사용, 참조 이미지를 `image` role로 전달
-3. **배경 제거**: `remove_background` 도구로 투명 PNG 생성
-4. **다운로드**: `public/` 폴더에 저장 → Remotion `staticFile()`로 접근
-5. **배치**: Scene 데이터의 `characterImage` 필드에 파일명 지정
+1. **이미지 생성**: OpenAI `gpt-image-1` API 직접 호출 (`.env`의 OPENAI_API_KEY 사용)
+2. **저장**: Base64 응답을 PNG 파일로 `public/` 폴더에 저장
+3. **배치**: Scene 데이터의 `characterImage` 필드에 파일명 지정
+
+### API 설정
+- **엔드포인트**: `https://api.openai.com/v1/images/generations`
+- **모델**: `gpt-image-1`
+- **API 키 위치**: `.env` 파일 (`OPENAI_API_KEY=sk-...`)
+- **응답 형식**: Base64 PNG (b64_json)
+- **크기**: `1024x1536` (세로형, 9:16에 가까운 비율)
 
 ### 참조 이미지 정보
 - **파일 위치**: `img/character.jpg`
-- **Higgsfield media_id**: `314f51de-df40-4aa2-9c94-98a9a4e92b8e`
-- ⚠️ media_id는 만료될 수 있음 — 만료 시 `img/character.jpg`를 다시 업로드하여 새 media_id 획득
+- 프롬프트에 캐릭터 외형을 상세 기술하여 일관성 유지
+- (참고: OpenAI gpt-image-1도 이미지 입력 지원하나, 현재는 프롬프트 기반으로 운용)
 
 ### 이미지 생성 규칙
-- **모델**: `gpt_image_2` (GPT Image 2) — 고정
-- **참조 이미지**: 항상 `img/character.jpg`를 reference로 전달 (캐릭터 외형 유지)
-- **비율**: `9:16` (세로형, 화면 위아래 가득 차도록)
+- **모델**: OpenAI `gpt-image-1` — `.env`의 API 키로 직접 호출
+- **비율**: `1024x1536` (세로형)
+- **배경**: `background: "transparent"` 파라미터로 투명 배경 PNG 직접 생성 (별도 배경 제거 불필요)
 - **프롬프트 필수 요소**:
   - 참조 이미지의 외형 특징 명시 (은색 메탈릭 바디, HMAD 검정 캡, 얼굴 없음 등)
   - 포즈: 근육 자랑, 플렉스, 포인팅 등 자유로운 프리 포즈
