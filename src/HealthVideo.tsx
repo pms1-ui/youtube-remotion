@@ -21,7 +21,7 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
   let currentFrame = 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#000000" }}>
+    <AbsoluteFill style={{ backgroundColor: "transparent" }}>
       {scenes.map((scene, index) => {
         const startFrame = currentFrame;
         const durationInFrames = Math.round(scene.durationInSeconds * fps);
@@ -30,6 +30,7 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
         return (
           <Sequence
             key={index}
+            name={`Scene ${index + 1} - ${scene.type}`}
             from={startFrame}
             durationInFrames={durationInFrames}
           >

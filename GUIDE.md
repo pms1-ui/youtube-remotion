@@ -21,7 +21,8 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 - 스크립트 파일: `src/data/script.ts`
 - **캐릭터 이미지 사용** (10개 순환)
 - 장면당 10초
-- 렌더 명령: `npx remotion render src/index.ts HealthVideo out/파일명.mp4`
+- 렌더 명령: `npx remotion render src/index.ts HealthVideo out/파일명.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le`
+- **출력 포맷: ProRes 4444 (.mov)** — 항상 투명 배경, 프리미어 프로 호환
 
 ### 숏폼 (9:16) — 쇼츠/릴스
 - Composition ID: `ShortVideo`
@@ -29,7 +30,8 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 - 스크립트 파일: `src/data/shorts-script.ts`
 - **캐릭터 이미지 사용하지 않음** — 콘텐츠가 화면 전체(중앙) 사용
 - 장면당 5~7초 (숏폼은 빠른 전환)
-- 렌더 명령: `npx remotion render src/index.ts ShortVideo out/파일명.mp4`
+- 렌더 명령: `npx remotion render src/index.ts ShortVideo out/파일명.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le`
+- **출력 포맷: ProRes 4444 (.mov)** — 항상 투명 배경
 - 텍스트 크기: 롱폼과 동일하게 유지 (세로 화면이라 자연스럽게 큼)
 - 총 영상 길이: 30~60초 권장 (쇼츠 제한)
 - **레이아웃 최적화 (자동 적용)**:
@@ -285,28 +287,65 @@ Remotion 기반 스크립트→영상 자동 생성 시스템.
 Higgsfield MCP를 통해 이미지를 생성하고, 배경을 제거한 뒤 Remotion에서 렌더링합니다.
 
 ### 제작 흐름
-1. **이미지 생성**: OpenAI `gpt-image-1` API 직접 호출 (`.env`의 OPENAI_API_KEY 사용)
-2. **저장**: Base64 응답을 PNG 파일로 `public/` 폴더에 저장
-3. **배치**: Scene 데이터의 `characterImage` 필드에 파일명 지정
+1. **이미지 생성**: OpenAI `gpt-image-2` API `/v1/images/edits` 엔드포인트 사용
+   - `public/character-v2.png`를 **참조 이미지로 반드시 함께 전송** (`image[]` 파라미터)
+   - 참조 이미지 없이 생성하면 캐릭터 외형이 달라짐 — 절대 빠뜨리지 않기
+2. **배경 제거**: rembg 라이브러리로 투명 PNG 변환 (`python -c "from rembg import remove..."`)
+3. **저장**: `public/char-01.png` ~ `char-10.png`
+4. **배치**: Scene 데이터의 `characterImage` 필드에 파일명 지정
 
 ### API 설정
-- **엔드포인트**: `https://api.openai.com/v1/images/generations`
-- **모델**: `gpt-image-1`
+- **엔드포인트**: `https://api.openai.com/v1/images/edits` (참조 이미지 포함 시)
+- **모델**: `gpt-image-2`
+- **Quality**: `high`
 - **API 키 위치**: `.env` 파일 (`OPENAI_API_KEY=sk-...`)
+- **참조 이미지**: `public/character-v2.png` (항상 함께 전송)
 - **응답 형식**: Base64 PNG (b64_json)
-- **크기**: `1024x1536` (세로형, 9:16에 가까운 비율)
+- **크기**: `1024x1536` (세로형)
+- **배경**: `solid black background` → rembg로 투명 변환
+
+### 병렬 생성 방식 (PowerShell Jobs)
+```powershell
+# 10개 동시 병렬 생성 후 rembg 일괄 배경 제거
+$jobs = @()
+for ($i = 0; $i -lt 10; $i++) {
+    $jobs += Start-Job -ScriptBlock {
+        param($key, $prompt, $num, $imgPath)
+        curl.exe -s -X POST "https://api.openai.com/v1/images/edits" `
+            -H "Authorization: Bearer $key" `
+            -F "model=gpt-image-2" -F "prompt=$prompt" `
+            -F "size=1024x1536" -F "quality=high" `
+            -F "image[]=@$imgPath" -o "public/char-$num-raw.b64"
+        # ... base64 디코딩 + 저장
+    } -ArgumentList $key, $prompt, $num, $imgPath
+}
+$jobs | Wait-Job | Receive-Job
+# 이후 python rembg로 일괄 배경 제거
+```
 
 ### 참조 이미지 정보
-- **파일 위치**: `img/character.jpg`
-- 프롬프트에 캐릭터 외형을 상세 기술하여 일관성 유지
-- (참고: OpenAI gpt-image-1도 이미지 입력 지원하나, 현재는 프롬프트 기반으로 운용)
+- **파일 위치**: `public/character-v2.png`
+- **특징**: 은색 메탈릭 바디, 눈코입 없는 매끈한 실버 얼굴, HMAD 검정 캡
+- ⚠️ 생성 시 반드시 함께 전송 — 없으면 외형 불일치
+
+### 프롬프트 규칙
+- **캐릭터 묘사**: "Same character as reference image exactly: silver metallic muscular bodybuilder with smooth featureless silver face without eyes nose or mouth, HMAD black cap, shirtless, black shorts, white sneakers"
+- **얼굴**: "smooth featureless silver face without eyes nose or mouth" (까만 얼굴이나 고개 숙임 X)
+- **포즈**: 반드시 보디빌딩 공식 포즈명 또는 자연스러운 포즈 사용 (주머니에 손 넣기, 팔짱 등)
+- **샷 타입**: 전신/상반신/하반신 골고루 혼합
+  - 전신: "full body head to toe"
+  - 상반신: "upper body shot cropped at waist, showing torso and above only"
+  - 하반신: "lower body shot from waist down only, legs and shorts visible"
+- **배경**: "solid black background, dramatic studio lighting"
+- **프롬프트 끝**: "ultra high quality, 8K detail, photorealistic metallic texture"
 
 ### 이미지 생성 규칙
-- **모델**: OpenAI `gpt-image-1` — `.env`의 API 키로 직접 호출
+- **모델**: OpenAI `gpt-image-2` — `/v1/images/edits` 엔드포인트 + 참조 이미지 필수
 - **비율**: `1024x1536` (세로형)
-- **배경**: `background: "transparent"` 파라미터로 투명 배경 PNG 직접 생성 (별도 배경 제거 불필요)
-- **프롬프트 배경 강화**: 프롬프트 끝에 반드시 추가 → `isolated figure only, no background, no floor, no shadows, no environment, character cutout only`
-- **검증**: 생성 후 응답의 `background` 필드가 `"transparent"`인지 확인
+- **배경**: 검정 배경으로 생성 → rembg로 투명 변환
+- **참조 이미지**: `public/character-v2.png` 반드시 함께 전송 (`image[]` 파라미터)
+- **프롬프트 배경 강화**: 프롬프트 끝에 반드시 추가 → `solid black background, dramatic studio lighting, ultra high quality, 8K detail, photorealistic metallic texture`
+- **검증**: 생성 후 rembg 처리, RGBA 모드 확인
 - **프롬프트 필수 요소**:
   - 참조 이미지의 외형 특징 명시 (은색 메탈릭 바디, HMAD 검정 캡, 얼굴 없음 등)
   - 포즈: 근육 자랑, 플렉스, 포인팅 등 자유로운 프리 포즈
@@ -345,11 +384,22 @@ Higgsfield MCP를 통해 이미지를 생성하고, 배경을 제거한 뒤 Remo
 - **방법**: 10개의 다양한 포즈 이미지를 선생성하고, 장면에 순환 배정
   - 포즈 풀에서 10개를 골라 생성 → `public/char-01.png` ~ `char-10.png`
   - 장면 N번에는 `char-0${((N-1) % 10) + 1}.png` 배정 (1~10 순환)
-- **API 호출 제한**: 동시 요청 과부하 방지를 위해 **3개씩 순차 생성** (절대 10개 동시 X)
+- **API 호출**: PowerShell Jobs로 **10개 동시 병렬 생성** (gpt-image-2는 동시 요청 제한 관대함)
+- **모델**: `gpt-image-2` + `quality: "high"` + 검정 배경 → rembg로 투명 처리
 - **구현**: script.ts 작성 시 characterImage를 순환 패턴으로 자동 배정
 - **장점**: 생성 시간 80% 절약, 크레딧 절약, 포즈 다양성은 유지
 - **파일 네이밍**: `public/char-01.png` ~ `char-10.png` (고정 풀, 10개)
 - **포즈 선택**: 영상 주제에 맞는 포즈로 선택 (등 운동 영상 → 등 포즈, 하체 영상 → 하체 포즈)
+- **이미지 크기 규칙**:
+  - 전신샷: 화면에 좀 작게 들어가도록 (캐릭터가 화면의 70~80% 높이)
+  - 상반신/하반신 반신샷: 몸이 이미지 프레임을 꽉 채우도록 (캐릭터가 화면의 95~100% 높이)
+  - 프롬프트에 "tightly cropped, filling the entire frame" (반신) 또는 "with some space around, not filling entire frame" (전신) 명시
+
+### Remotion 시퀀스 채번 규칙
+- 모든 Sequence에 `name` prop으로 장면 번호 + 타입 표시
+- 형식: `Scene 1 - text`, `Scene 2 - barChart`, `Scene 3 - compare` ...
+- Studio 타임라인에서 각 장면을 번호로 식별 가능
+- 구현: `<Sequence name={\`Scene ${index + 1} - ${scene.type}\`} ...>`
 
 ### 서브에이전트 위임 규칙
 - 이미지 생성, 다운로드 등 반복적이고 독립적인 작업은 서브에이전트에 위임 가능
