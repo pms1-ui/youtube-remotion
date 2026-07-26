@@ -555,7 +555,7 @@ npm run render     # MP4로 렌더링 → out/video.mp4
 |---------|-----|------|
 | `silence_thresh` | -35 dB | 이 데시벨 이하를 무음으로 판단 |
 | `min_silence_len` | 300 ms | 최소 이 시간 이상 지속되는 무음만 잘라냄 |
-| `keep_silence` | 50 ms | 각 청크 앞뒤에 유지하는 여유 (자연스러운 이음) |
+| `keep_silence` | 70 ms | 각 청크 앞뒤에 유지하는 여유 (자연스러운 이음) |
 | `bitrate` | 320k | 출력 MP3 비트레이트 |
 
 ### 실행 방법
@@ -564,7 +564,7 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 
 audio = AudioSegment.from_mp3("audio/파일명.mp3")
-chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-35, keep_silence=50)
+chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-35, keep_silence=70)
 output = AudioSegment.empty()
 for chunk in chunks:
     output += chunk
