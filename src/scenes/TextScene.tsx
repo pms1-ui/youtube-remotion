@@ -99,7 +99,7 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
           src={staticFile(scene.characterImage)}
           style={{
             position: "absolute",
-            right: "12%",
+            right: "5%",
             bottom: 0,
             height: "95%",
             opacity: interpolate(frame, [3, 15], [0, 1], { extrapolateRight: "clamp" }),
