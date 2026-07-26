@@ -534,3 +534,45 @@ Same character as reference: silver metallic muscular bodybuilder with HMAD blac
 npm start          # Remotion Studio (미리보기)
 npm run render     # MP4로 렌더링 → out/video.mp4
 ```
+
+---
+
+## 오디오 트림 (무음 구간 제거)
+
+### 개요
+녹음 완료된 스크립트 음성 파일에서 숨쉬는 구간, 말 없는 구간(무음)을 자동으로 잘라내는 작업.
+
+### 폴더 구조
+- **원본 업로드**: `audio/` (루트 하위)
+- **결과물 저장**: `audio/result/`
+
+### 사용 라이브러리
+- `pydub` (Python) — 오디오 분할 및 합성
+- `ffmpeg` (시스템) — pydub 백엔드 디코딩/인코딩
+
+### 트림 설정값
+| 파라미터 | 값 | 설명 |
+|---------|-----|------|
+| `silence_thresh` | -35 dB | 이 데시벨 이하를 무음으로 판단 |
+| `min_silence_len` | 300 ms | 최소 이 시간 이상 지속되는 무음만 잘라냄 |
+| `keep_silence` | 50 ms | 각 청크 앞뒤에 유지하는 여유 (자연스러운 이음) |
+| `bitrate` | 320k | 출력 MP3 비트레이트 |
+
+### 실행 방법
+```python
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+
+audio = AudioSegment.from_mp3("audio/파일명.mp3")
+chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-35, keep_silence=50)
+output = AudioSegment.empty()
+for chunk in chunks:
+    output += chunk
+output.export("audio/result/파일명_trimmed.mp3", format="mp3", bitrate="320k")
+```
+
+### 미세 조정
+- 너무 빡빡하게 잘림 → `silence_thresh`를 올린다 (-35 → -30)
+- 아직 빈 구간 많음 → `silence_thresh`를 낮춘다 (-35 → -40)
+- 말 시작/끝이 잘림 → `keep_silence`를 올린다 (50 → 100)
+- 짧은 숨소리도 잘라야 함 → `min_silence_len`을 줄인다 (300 → 200)
