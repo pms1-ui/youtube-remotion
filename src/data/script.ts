@@ -38,45 +38,40 @@ export type Scene = {
 };
 
 export const SCENES: Scene[] = [
-  // ===== 인트로 (3장면) =====
-  { type: "text", characterImage: "image_2026/char-01.png", text: "그리스 신 체형을\n집에서 만들었다", subtitle: "맨몸운동 + 최소 장비 + 시스템", durationInSeconds: 10, accent: "#ffd93d" },
-  { type: "barChart", characterImage: "image_2026/char-02.png", text: "맨몸 vs 웨이트 근비대", description: "12주 제지방량 증가율 (2022 시스테매틱 리뷰)", durationInSeconds: 10, accent: "#4A90D9", barData: [{ label: "맨몸운동", value: 3.2, color: "#00b894" }, { label: "웨이트", value: 3.5, color: "#4A90D9" }] },
-  { type: "text", characterImage: "image_2026/char-03.png", text: "도구가 아니라\n자극의 질이 핵심", subtitle: "통계적 유의차 없음", durationInSeconds: 10, accent: "#00b894" },
+  // ===== 인트로 — 후킹 (4장면) =====
+  { type: "text", characterImage: "image_2026/char-01.png", text: "등 운동 열심히 하는데\nV테이퍼가 안 나온다?", subtitle: "이유가 있습니다", durationInSeconds: 7, accent: "#e17055" },
+  { type: "barChart", characterImage: "image_2026/char-02.png", text: "같은 랫풀다운, 그립만 바꿔도", description: "광배근 활성도 차이 (2022 근전도 연구)", durationInSeconds: 8, accent: "#4A90D9", barData: [{ label: "와이드 그립", value: 63, color: "#74b9ff" }, { label: "내로우 중립", value: 100, color: "#00b894" }] },
+  { type: "text", characterImage: "image_2026/char-03.png", text: "같은 무게, 같은 반복\n효과가 완전히 다르다", subtitle: "그립·각도·팔꿈치 방향이 핵심", durationInSeconds: 7, accent: "#ffd93d" },
+  { type: "iconList", characterImage: "image_2026/char-04.png", text: "오늘의 3가지 등 구역", durationInSeconds: 7, accent: "#6c5ce7", bullets: ["등 하부 너비", "등 상부 너비", "등 두께"] },
 
-  // ===== 시작 — 바닥에서 (3장면) =====
-  { type: "iconList", characterImage: "image_2026/char-04.png", text: "가진 것 = 세 가지", durationInSeconds: 10, accent: "#6c5ce7", bullets: ["내 몸", "내 방", "변하겠다는 의지"] },
-  { type: "splitFact", characterImage: "image_2026/char-05.png", text: "시작점 → 현재", durationInSeconds: 10, accent: "#e17055", compareData: { left: { title: "시작", description: "푸시업 15개\n하위 5% 수준" }, right: { title: "현재", description: "그리스 신 체형\n완전 변환" } } },
-  { type: "barChart", characterImage: "image_2026/char-06.png", text: "8주 맨몸운동 효과", description: "초보자 근력 향상 (2023 BJSM)", durationInSeconds: 10, accent: "#00b894", barData: [{ label: "상체 근력", value: 28, color: "#4A90D9" }, { label: "하체 근력", value: 23, color: "#00b894" }] },
+  // ===== 등의 문제점 (3장면) =====
+  { type: "donutChart", characterImage: "image_2026/char-05.png", text: "등 운동 시 부하 분배", description: "2019년 풀다운 연구 — 팔이 40% 가져감", durationInSeconds: 8, accent: "#e17055", donutData: [{ label: "등 근육", value: 60, color: "#4A90D9" }, { label: "이두+전완", value: 40, color: "#e17055" }] },
+  { type: "highlight", characterImage: "image_2026/char-06.png", text: "등 15개+ 근육 구조", description: "강한 근육이 약한 근육을 잡아먹는다", durationInSeconds: 8, accent: "#6c5ce7", bullets: ["광배근", "대원근", "트랩(승모근)", "능형근", "후면 삼각근", "척추기립근"], bulletDescriptions: ["너비 담당", "V라인 보조", "두께 상부", "두께 중부", "후면 볼륨", "자세 안정"] },
+  { type: "iconList", characterImage: "image_2026/char-07.png", text: "타겟을 바꾸는 3가지 키", durationInSeconds: 6, accent: "#00b894", bullets: ["그립 너비·방향", "상체 각도", "팔꿈치 궤적"] },
 
-  // ===== 벌킹 실수 (3장면) =====
-  { type: "text", characterImage: "image_2026/char-07.png", text: "크게 먹어야\n크게 된다?", subtitle: "인터넷 벌킹 신화의 함정", durationInSeconds: 10, accent: "#e17055" },
-  { type: "barChart", characterImage: "image_2026/char-08.png", text: "벌킹의 현실", description: "12주 벌킹 후 체성분 변화\n(2020 국제비만학회지)", durationInSeconds: 10, accent: "#e17055", barData: [{ label: "근육 증가", value: 2.1, color: "#00b894" }, { label: "체지방 증가", value: 3.8, color: "#e17055" }] },
-  { type: "compare", characterImage: "image_2026/char-09.png", text: "원래 목표 vs 현실", durationInSeconds: 10, accent: "#6c5ce7", compareData: { left: { title: "원래 목표", description: "강하고 날씬하고\n운동 능력 있는 몸" }, right: { title: "벌킹 결과", description: "무겁고 느리고\n체지방률 +4.2%p" } } },
+  // ===== 1번 운동: 내로우 그립 랫 풀다운 (5장면) =====
+  { type: "text", characterImage: "image_2026/char-08.png", text: "등 하부 너비\n내로우 그립 랫 풀다운", subtitle: "타겟: 광배근 하부 + 대원근", durationInSeconds: 7, accent: "#4A90D9" },
+  { type: "splitFact", characterImage: "image_2026/char-09.png", text: "와이드 그립의 함정", durationInSeconds: 8, accent: "#e17055", compareData: { left: { title: "와이드 그립", description: "팔꿈치 벌어짐\n견갑골 주변만 자극" }, right: { title: "내로우 중립", description: "팔꿈치 밀착\n광배근 집중 +22%" } } },
+  { type: "highlight", characterImage: "image_2026/char-01.png", text: "실행법 핵심 큐", description: "어깨 너비 뉴트럴 그립", durationInSeconds: 8, accent: "#00b894", bullets: ["팔꿈치로 당기기", "호를 그리며 엉덩이로", "어깨를 귀에서 멀리", "상단에서 풀 스트레칭"], bulletDescriptions: ["손이 아닌 팔꿈치 시각화", "직선 X → 곡선 O", "트랩 개입 차단", "팔 완전히 펴고 어깨 올리기"] },
+  { type: "barChart", characterImage: "image_2026/char-02.png", text: "풀 ROM vs 부분 ROM", description: "근비대 차이 (2023 메타분석)", durationInSeconds: 8, accent: "#00b894", barData: [{ label: "부분 ROM", value: 72, color: "#74b9ff" }, { label: "풀 ROM", value: 100, color: "#00b894" }] },
+  { type: "text", characterImage: "image_2026/char-03.png", text: "스트레칭 안 하면\n성장의 1/3을 버린다", subtitle: "풀 렙 후 → 상단 하프 렙 추가", durationInSeconds: 7, accent: "#e17055" },
 
-  // ===== 기본으로 복귀 + 시스템 (3장면) =====
-  { type: "iconList", characterImage: "image_2026/char-01.png", text: "기본 4가지 동작", durationInSeconds: 10, accent: "#4A90D9", bullets: ["푸시업", "풀업", "딥스", "딥 스쿼트"] },
-  { type: "splitFact", characterImage: "image_2026/char-02.png", text: "운동 vs 훈련", durationInSeconds: 10, accent: "#6c5ce7", compareData: { left: { title: "전 (운동)", description: "랜덤 운동\n매일 뭐 할지 고민" }, right: { title: "후 (훈련)", description: "계획 존재\n답이 이미 있음" } } },
-  { type: "barChart", characterImage: "image_2026/char-03.png", text: "계획의 힘", description: "운동 지속률 비교\n(2019 심리학 프론티어)", durationInSeconds: 10, accent: "#00b894", barData: [{ label: "계획 있음", value: 91, color: "#00b894" }, { label: "계획 없음", value: 47, color: "#e17055" }] },
+  // ===== 2번 운동: 와이드 그립 케이블 로우 (5장면) =====
+  { type: "text", characterImage: "image_2026/char-04.png", text: "등 상부 너비\n와이드 그립 케이블 로우", subtitle: "타겟: 광배근 상부 + 후면 삼각근", durationInSeconds: 7, accent: "#6c5ce7" },
+  { type: "barChart", characterImage: "image_2026/char-05.png", text: "전완 각도와 이두 개입", description: "45도 이상 기울면 이두 +34% (2020 연구)", durationInSeconds: 8, accent: "#e17055", barData: [{ label: "전완 평행", value: 66, color: "#00b894" }, { label: "전완 45도↑", value: 100, color: "#e17055" }] },
+  { type: "iconList", characterImage: "image_2026/char-06.png", text: "핵심 수정 3가지", durationInSeconds: 8, accent: "#4A90D9", bullets: ["어깨보다 약간 넓은 그립", "상체 약간 앞으로 기울임", "전완 바닥과 평행 유지"] },
+  { type: "splitFact", characterImage: "image_2026/char-07.png", text: "견갑골 움직임", durationInSeconds: 7, accent: "#00b894", compareData: { left: { title: "당길 때", description: "견갑골 모으기\n광배근 수축" }, right: { title: "돌아갈 때", description: "견갑골 최대 열기\n풀 스트레칭" } } },
+  { type: "text", characterImage: "image_2026/char-08.png", text: "전완 평행 유지 =\n이두 차단 핵심", subtitle: "너무 많이 구부려 당기지 않는다", durationInSeconds: 7, accent: "#6c5ce7" },
 
-  // ===== 핵심 원칙 1: 점진적 과부하 (2장면) =====
-  { type: "barChart", characterImage: "image_2026/char-04.png", text: "점진적 과부하 효과", description: "12주 후 둘레 증가 비교\n(2020 EJSS)", durationInSeconds: 10, accent: "#4A90D9", barData: [{ label: "맨몸 팔", value: 1.8, color: "#00b894" }, { label: "웨이트 팔", value: 2.0, color: "#4A90D9" }, { label: "맨몸 가슴", value: 2.3, color: "#00cec9" }, { label: "웨이트 가슴", value: 2.5, color: "#6c5ce7" }] },
-  { type: "highlight", characterImage: "image_2026/char-05.png", text: "과부하 적용 방법", description: "주당 볼륨 5~10% 증가", durationInSeconds: 10, accent: "#ffd93d", bullets: ["더 어려운 변형", "템포 조절 3초+1초", "세트 간 휴식 단축", "반복 수 점진 증가"], bulletDescriptions: ["아처→원암 푸시업", "하강 3초 정지 1초", "90초→60초→45초", "매주 2회씩 추가"] },
+  // ===== 3번 운동: 원암 덤벨 로우 (5장면) =====
+  { type: "text", characterImage: "image_2026/char-09.png", text: "등 두께\n원암 덤벨 로우", subtitle: "타겟: 트랩 + 능형근 + 광배근 전체", durationInSeconds: 7, accent: "#ffd93d" },
+  { type: "highlight", characterImage: "image_2026/char-01.png", text: "원암 로우의 장점", description: "바벨 로우 대비 가동범위 +19%", durationInSeconds: 8, accent: "#4A90D9", bullets: ["좌우 독립 자극", "불균형 교정", "넓은 가동범위", "흉추 가동성 보완"], bulletDescriptions: ["한쪽씩 집중", "약한 쪽 보강", "바벨 대비 +19%", "등 깊숙이 자극"] },
+  { type: "iconList", characterImage: "image_2026/char-02.png", text: "실행법", durationInSeconds: 8, accent: "#00b894", bullets: ["인클라인 벤치 한 팔 기대기", "반대쪽 뒷다리 옆으로", "바닥 쓸어올리듯 호 그리기", "상단 1초 홀드 → 풀 스트레칭"] },
+  { type: "text", characterImage: "image_2026/char-03.png", text: "더 못 당기면\n가동범위 줄여 실패지점", subtitle: "쥐어짜듯 끝내면 등 폭발 펌핑", durationInSeconds: 7, accent: "#e17055" },
+  { type: "compare", characterImage: "image_2026/char-04.png", text: "원암 로우 vs 바벨 로우", durationInSeconds: 8, accent: "#ffd93d", compareData: { left: { title: "바벨 로우", description: "양손 고정\n가동범위 제한" }, right: { title: "원암 덤벨 로우", description: "독립 자극\nROM +19%" } } },
 
-  // ===== 핵심 원칙 2: 고반복 (2장면) =====
-  { type: "barChart", characterImage: "image_2026/char-06.png", text: "고반복 vs 저반복 근비대", description: "근섬유 단면적 증가 비교\n(2021 스포츠의학 저널)", durationInSeconds: 10, accent: "#6c5ce7", barData: [{ label: "고반복(15~40회)", value: 7.1, color: "#6c5ce7" }, { label: "저반복(6~12회)", value: 7.6, color: "#4A90D9" }] },
-  { type: "highlight", characterImage: "image_2026/char-07.png", text: "고반복의 추가 이점", description: "근비대는 동일 + 보너스 효과", durationInSeconds: 10, accent: "#00b894", bullets: ["근지구력 +18.3%", "체지방 -1.4%p", "기능적 근육 형성", "일석삼조 효과"], bulletValues: [83, 71, 90, 95] },
-
-  // ===== 핵심 원칙 3: 시스템 (2장면) =====
-  { type: "barChart", characterImage: "image_2026/char-08.png", text: "시스템 vs 동기부여", description: "6개월 내 탈락률 비교\n(2023 행동과학 연구)", durationInSeconds: 10, accent: "#e17055", barData: [{ label: "동기부여 기반", value: 73, color: "#e17055" }, { label: "시스템 기반", value: 26, color: "#00b894" }] },
-  { type: "iconList", characterImage: "image_2026/char-09.png", text: "시스템 구축법", durationInSeconds: 10, accent: "#4A90D9", bullets: ["월수금: 상체 (푸시업+딥스)", "화목토: 하체+당기기", "매주 반복 수 기록", "5~10% 점진 증가"] },
-
-  // ===== 6개월 변화 + 내면 변화 (3장면) =====
-  { type: "highlight", characterImage: "image_2026/char-01.png", text: "6개월 맨몸운동 결과", description: "하버드 보건대학원 2022", durationInSeconds: 10, accent: "#00b894", bullets: ["체지방 -4.7%p", "악력 +19%", "유연성 +23%", "자기효능감 +34%"], bulletValues: [47, 19, 23, 34] },
-  { type: "text", characterImage: "image_2026/char-02.png", text: "가장 큰 변화는\n몸이 아니라 내면", subtitle: "자존감 +0.47 SD (항우울제 수준)", durationInSeconds: 10, accent: "#6c5ce7" },
-  { type: "iconList", characterImage: "image_2026/char-03.png", text: "운동이 바꾸는 것들", durationInSeconds: 10, accent: "#ffd93d", bullets: ["자신감", "자세", "규율", "인생을 대하는 태도"] },
-
-  // ===== 결론 & 아웃트로 (3장면) =====
-  { type: "highlight", characterImage: "image_2026/char-04.png", text: "정리: 3가지 원칙", description: "집에서 그리스 신 체형 만들기", durationInSeconds: 10, accent: "#4A90D9", bullets: ["점진적 과부하", "고반복 훈련", "시스템 구축"], bulletDescriptions: ["주당 5~10% 볼륨↑", "근비대+체지방↓+지구력↑", "요일별 고정 + 기록"] },
-  { type: "text", characterImage: "image_2026/char-05.png", text: "여러분의 몸이\n최고의 장비다", subtitle: "오늘 밤 푸시업 한 세트부터", durationInSeconds: 10, accent: "#ffd93d" },
-  { type: "iconList", characterImage: "image_2026/char-06.png", text: "영상이 유익했다면", durationInSeconds: 10, accent: "#6c5ce7", bullets: ["구독", "좋아요", "알림 설정", "하이프"] },
+  // ===== 결론 (3장면) =====
+  { type: "highlight", characterImage: "image_2026/char-05.png", text: "오늘의 3가지 정리", description: "등 너비 + 두께 동시에", durationInSeconds: 8, accent: "#4A90D9", bullets: ["내로우 풀다운", "와이드 케이블 로우", "원암 덤벨 로우"], bulletDescriptions: ["광배근 하부 + 대원근", "광배근 상부 + 승모근 + 후삼각", "트랩 + 능형근 + 광배근 전체"] },
+  { type: "text", characterImage: "image_2026/char-06.png", text: "다음 등 운동 때\n바로 적용해 보세요", subtitle: "분명 차이 느끼실 겁니다", durationInSeconds: 7, accent: "#00b894" },
+  { type: "iconList", characterImage: "image_2026/char-07.png", text: "영상이 유익했다면", durationInSeconds: 7, accent: "#6c5ce7", bullets: ["구독", "좋아요", "알림 설정", "하이프"] },
 ];

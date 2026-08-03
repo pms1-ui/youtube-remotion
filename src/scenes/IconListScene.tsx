@@ -11,20 +11,21 @@ import { Scene } from "../data/script";
 
 export const IconListScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
   const bullets = scene.bullets || [];
   const hasChar = Boolean(scene.characterImage);
+  const isVertical = width < 1200;
 
   const sceneZoom = interpolate(frame, [0, durationInFrames], [1.0, 1.1], {
     extrapolateRight: "clamp",
   });
 
-  const titleOpacity = interpolate(frame, [5, 18], [0, 1], {
+  const titleOpacity = interpolate(frame, [isVertical ? 2 : 5, isVertical ? 8 : 18], [0, 1], {
     extrapolateRight: "clamp",
   });
   const titleScale = spring({
-    frame: Math.max(0, frame - 5),
+    frame: Math.max(0, frame - (isVertical ? 2 : 5)),
     fps,
     config: { damping: 14, stiffness: 100 },
   });
@@ -34,15 +35,15 @@ export const IconListScene: React.FC<{ scene: Scene }> = ({ scene }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
+          top: isVertical ? "18%" : 0,
           left: 0,
           right: hasChar ? "23%" : 0,
-          bottom: 0,
+          bottom: isVertical ? "18%" : 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "60px 80px",
+          padding: isVertical ? "20px 40px" : "60px 80px",
         }}
       >
         {/* 메인 텍스트 */}
@@ -66,7 +67,7 @@ export const IconListScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         {/* 세로 리스트 — 넘버링 + 키워드 */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%", maxWidth: 700 }}>
           {bullets.map((bullet, i) => {
-            const delay = 20 + i * 12;
+            const delay = isVertical ? (5 + i * 5) : (20 + i * 12);
             const itemOpacity = interpolate(frame, [delay, delay + 10], [0, 1], {
               extrapolateRight: "clamp",
             });

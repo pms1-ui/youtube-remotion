@@ -23,13 +23,13 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
     extrapolateRight: "clamp",
   });
 
-  const titleOpacity = interpolate(frame, [5, 20], [0, 1], {
+  const titleOpacity = interpolate(frame, [isVertical ? 2 : 5, isVertical ? 8 : 20], [0, 1], {
     extrapolateRight: "clamp",
   });
 
   // 차트 영역 — 캐릭터가 있으면 작게, 숏폼이면 더 작게
   const chartWidth = isVertical ? 700 : (hasChar ? 900 : 1200);
-  const chartHeight = isVertical ? 350 : 420;
+  const chartHeight = isVertical ? 550 : 420;
   const barGap = 30;
   const barWidth =
     (chartWidth - barGap * (barData.length + 1)) / barData.length;
@@ -45,15 +45,15 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
+          top: isVertical ? "18%" : 0,
           left: 0,
           right: hasChar ? "23%" : 0,
-          bottom: 0,
+          bottom: isVertical ? "18%" : 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: 60,
+          padding: isVertical ? "20px 40px" : 60,
         }}
       >
         {/* 메인 텍스트 */}
@@ -120,7 +120,7 @@ export const BarChartScene: React.FC<{ scene: Scene }> = ({ scene }) => {
 
         {/* 바 */}
         {barData.map((item, i) => {
-          const delay = 25 + i * 8;
+          const delay = isVertical ? (8 + i * 4) : (25 + i * 8);
           const barGrow = spring({
             frame: Math.max(0, frame - delay),
             fps,

@@ -90,10 +90,11 @@ const CompareCard: React.FC<{
 
 export const CompareScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
   const compareData = scene.compareData;
   const hasChar = Boolean(scene.characterImage);
+  const isVertical = width < 1200;
 
   const sceneZoom = interpolate(frame, [0, durationInFrames], [1, 1.1], {
     extrapolateRight: "clamp",
@@ -102,8 +103,8 @@ export const CompareScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   if (!compareData) return null;
   const { left, right } = compareData;
 
-  const titleOpacity = interpolate(frame, [5, 20], [0, 1], { extrapolateRight: "clamp" });
-  const titleScale = spring({ frame: Math.max(0, frame - 5), fps, config: { damping: 14, stiffness: 100 } });
+  const titleOpacity = interpolate(frame, [2, 8], [0, 1], { extrapolateRight: "clamp" });
+  const titleScale = spring({ frame: Math.max(0, frame - 2), fps, config: { damping: 14, stiffness: 100 } });
 
   return (
     <AbsoluteFill style={{ backgroundColor: "transparent", transform: `scale(${sceneZoom})` }}>
@@ -111,15 +112,15 @@ export const CompareScene: React.FC<{ scene: Scene }> = ({ scene }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
+          top: isVertical ? "18%" : 0,
           left: 0,
           right: hasChar ? "23%" : 0,
-          bottom: 0,
+          bottom: isVertical ? "18%" : 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: 60,
+          padding: isVertical ? "20px 40px" : 60,
         }}
       >
         <div style={{ opacity: titleOpacity, transform: `scale(${titleScale})`, fontSize: 62, fontWeight: 700, color: "#ffffff", fontFamily: "SCDream", textAlign: "center", marginBottom: 50, wordBreak: "keep-all" as const }}>
@@ -133,8 +134,8 @@ export const CompareScene: React.FC<{ scene: Scene }> = ({ scene }) => {
         )}
 
         <div style={{ display: "flex", gap: 80, justifyContent: "center", alignItems: "flex-start" }}>
-          <CompareCard title={left.title} description={left.description} color={accent} frame={frame} fps={fps} delay={15} side="left" />
-          <CompareCard title={right.title} description={right.description} color={accent} frame={frame} fps={fps} delay={45} side="right" />
+          <CompareCard title={left.title} description={left.description} color={accent} frame={frame} fps={fps} delay={isVertical ? 5 : 15} side="left" />
+          <CompareCard title={right.title} description={right.description} color={accent} frame={frame} fps={fps} delay={isVertical ? 15 : 45} side="right" />
         </div>
       </div>
 

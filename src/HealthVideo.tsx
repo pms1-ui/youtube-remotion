@@ -16,7 +16,8 @@ export type HealthVideoProps = {
 };
 
 export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const isVertical = width < 1200;
 
   let currentFrame = 0;
 
@@ -34,7 +35,7 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
             from={startFrame}
             durationInFrames={durationInFrames}
           >
-            <TransitionOverlay durationInFrames={durationInFrames} />
+            {!isVertical && <TransitionOverlay durationInFrames={durationInFrames} />}
 
             {scene.type === "text" && <TextScene scene={scene} />}
             {scene.type === "barChart" && <BarChartScene scene={scene} />}

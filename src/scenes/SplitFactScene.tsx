@@ -11,42 +11,43 @@ import { Scene } from "../data/script";
 
 export const SplitFactScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
   const hasChar = Boolean(scene.characterImage);
   const compareData = scene.compareData;
+  const isVertical = width < 1200;
 
   const sceneZoom = interpolate(frame, [0, durationInFrames], [1.1, 1.0], {
     extrapolateRight: "clamp",
   });
 
-  const titleOpacity = interpolate(frame, [5, 18], [0, 1], {
+  const titleOpacity = interpolate(frame, [isVertical ? 2 : 5, isVertical ? 8 : 18], [0, 1], {
     extrapolateRight: "clamp",
   });
 
   if (!compareData) return null;
 
-  // 상단 (원인/오해) — 빨간 톤
-  const topDelay = 15;
-  const topOpacity = interpolate(frame, [topDelay, topDelay + 12], [0, 1], {
+  // 상단 (원인/오해)
+  const topDelay = isVertical ? 5 : 15;
+  const topOpacity = interpolate(frame, [topDelay, topDelay + 8], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const topSlide = interpolate(frame, [topDelay, topDelay + 12], [-30, 0], {
+  const topSlide = interpolate(frame, [topDelay, topDelay + 8], [-30, 0], {
     extrapolateRight: "clamp",
   });
 
-  // 하단 (결과/진실) — 초록/파란 톤
-  const botDelay = 35;
-  const botOpacity = interpolate(frame, [botDelay, botDelay + 12], [0, 1], {
+  // 하단 (결과/진실)
+  const botDelay = isVertical ? 15 : 35;
+  const botOpacity = interpolate(frame, [botDelay, botDelay + 8], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const botSlide = interpolate(frame, [botDelay, botDelay + 12], [30, 0], {
+  const botSlide = interpolate(frame, [botDelay, botDelay + 8], [30, 0], {
     extrapolateRight: "clamp",
   });
 
   // 화살표 등장
-  const arrowDelay = 28;
-  const arrowOpacity = interpolate(frame, [arrowDelay, arrowDelay + 10], [0, 1], {
+  const arrowDelay = isVertical ? 10 : 28;
+  const arrowOpacity = interpolate(frame, [arrowDelay, arrowDelay + 6], [0, 1], {
     extrapolateRight: "clamp",
   });
 
@@ -55,15 +56,15 @@ export const SplitFactScene: React.FC<{ scene: Scene }> = ({ scene }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
+          top: isVertical ? "18%" : 0,
           left: 0,
           right: hasChar ? "23%" : 0,
-          bottom: 0,
+          bottom: isVertical ? "18%" : 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "60px 80px",
+          padding: isVertical ? "20px 40px" : "60px 80px",
           gap: 0,
         }}
       >

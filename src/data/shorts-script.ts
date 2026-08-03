@@ -1,29 +1,35 @@
 import { Scene } from "./script";
 
 export const SHORTS_SCENES: Scene[] = [
-  // 머신 vs 프리웨이트 숏폼 (텍스트 타입 미사용, 모든 장면 시각적 타입)
+  // 바벨컬 vs 덤벨컬 숏폼 — 문장 단위 분할, 총 36초, text 타입 미사용
 
-  // 1. 고정관념 vs 현실
-  { type: "splitFact", text: "근육 성장의 정석?", durationInSeconds: 6, accent: "#6c5ce7", compareData: { left: { title: "고정관념", description: "프리웨이트만이\n정석이다" }, right: { title: "현실", description: "머신이 고립에선\n훨씬 우위" } } },
+  // 1. 후킹 — 대결 구도 (3초)
+  { type: "compare", text: "바벨컬 vs 덤벨컬", description: "팔 운동 효율 대장은?", durationInSeconds: 3, accent: "#ffd93d", compareData: { left: { title: "바벨컬", description: "고중량\n안정성" }, right: { title: "덤벨컬", description: "고립\n활성도" } } },
 
-  // 2. 프리웨이트의 한계
-  { type: "iconList", text: "프리웨이트의 문제점", durationInSeconds: 6, accent: "#e17055", bullets: ["근육 안 붙고 노동만", "주변 근육 과다 개입", "자세 흔들림으로 분산"] },
+  // 2. 바벨컬 중량 우위 (4초)
+  { type: "barChart", text: "바벨컬이 15~20%\n더 무겁게 가능", description: "양손 결합 → 안정성 확보", durationInSeconds: 4, accent: "#4A90D9", barData: [{ label: "바벨컬", value: 118, color: "#4A90D9" }, { label: "덤벨컬", value: 100, color: "#e17055" }] },
 
-  // 3. 머신의 장점 — 고립 극대화
-  { type: "highlight", text: "머신의 핵심 강점", description: "몸통·코어·자세를 고정", durationInSeconds: 7, accent: "#00b894", bullets: ["코어 고정", "주변 근육 차단", "타겟 근육 집중", "궤적 최적화"], bulletDescriptions: ["몸통 흔들림 제거", "팔·어깨 간섭 제거", "자극 정확도 극대화", "파나타 등 설계된 동선"] },
+  // 3. 질문 던지기 (3초)
+  { type: "splitFact", text: "그런데 왜?", durationInSeconds: 3, accent: "#6c5ce7", compareData: { left: { title: "보디빌더들", description: "덤벨컬을\n필수 루틴" }, right: { title: "이유", description: "이두 고립\n극대화" } } },
 
-  // 4. 고립도 비교 — 막대 차트
-  { type: "barChart", text: "타겟 근육 고립도", description: "등 운동 시 광배근 자극 비율", durationInSeconds: 7, accent: "#4A90D9", barData: [{ label: "프리웨이트", value: 65, color: "#e17055" }, { label: "머신", value: 95, color: "#00b894" }] },
+  // 4. 바벨컬 한계 (4초)
+  { type: "splitFact", text: "바벨컬의 한계", durationInSeconds: 4, accent: "#e17055", compareData: { left: { title: "이두근 본래 기능", description: "회외 작용\n(손목 바깥 비틀기)" }, right: { title: "바벨컬", description: "그립 고정\n회외 불가" } } },
 
-  // 5. 팩폭 — 필 히스 사례
-  { type: "splitFact", text: "올림피아 챔피언의 진실", durationInSeconds: 7, accent: "#4A90D9", compareData: { left: { title: "필 히스", description: "역사상 가장\n멋진 몸" }, right: { title: "훈련 방식", description: "커리어 대부분\n머신으로 제작" } } },
+  // 5. 덤벨컬 강점 (4초)
+  { type: "highlight", text: "덤벨컬 수축 시", description: "손목을 바깥으로 비틀면", durationInSeconds: 4, accent: "#00b894", bullets: ["회외 작용 활성화", "이두근 활성도 폭발", "피크 수축 극대화"], bulletDescriptions: ["손목 비틀기 동작", "바벨 대비 +14%", "최대 가동범위에서"] },
 
-  // 6. 근비대의 본질 — 도넛
-  { type: "donutChart", text: "근비대의 본질", description: "머신이냐 프리웨이트냐가 아님\n핵심은 지속적 긴장감", durationInSeconds: 7, accent: "#6c5ce7", donutData: [{ label: "지속적 긴장감", value: 60, color: "#6c5ce7" }, { label: "충분한 파괴", value: 40, color: "#a29bfe" }] },
+  // 6. 수치 비교 (5초)
+  { type: "barChart", text: "최대 수축 자극 비교", description: "가동범위 끝단 이두 활성도", durationInSeconds: 5, accent: "#00b894", barData: [{ label: "바벨컬", value: 86, color: "#74b9ff" }, { label: "덤벨컬", value: 100, color: "#00b894" }] },
 
-  // 7. 결론 전략
-  { type: "iconList", text: "실전 적용 전략", durationInSeconds: 7, accent: "#00b894", bullets: ["고립 필요 → 머신 우선", "근육에 긴장감 유지", "잘 찢어냈는지가 핵심", "도구보다 자극이 본질"] },
+  // 7. 덤벨컬 장점 정리 (4초)
+  { type: "iconList", text: "덤벨컬 강점 정리", durationInSeconds: 4, accent: "#00b894", bullets: ["회외 작용 100% 활용", "수축 자극 +14% 우수", "좌우 균형 교정 탁월"] },
 
-  // 8. 마무리
-  { type: "compare", text: "최종 결론", description: "도구가 아닌 자극의 질", durationInSeconds: 5, accent: "#6c5ce7", compareData: { left: { title: "프리웨이트", description: "코어·협응\n스트렝스" }, right: { title: "머신", description: "고립·집중\n근비대 극대화" } } },
+  // 8. 짝짝이 균형 (3초)
+  { type: "highlight", text: "짝짝이 균형 잡기", description: "좌우 독립 자극으로 교정", durationInSeconds: 3, accent: "#4A90D9", bullets: ["왼팔 약하면 왼팔만 집중", "좌우 대칭 완성"], bulletDescriptions: ["독립 부하 조절 가능", "바벨로는 불가능"] },
+
+  // 9. 결론 공식 (3초)
+  { type: "splitFact", text: "결론: 이두 루틴 공식", durationInSeconds: 3, accent: "#ffd93d", compareData: { left: { title: "1번째", description: "바벨컬\n중량 치기" }, right: { title: "2번째", description: "덤벨컬\n이두 찢기" } } },
+
+  // 10. 마무리 (3초)
+  { type: "compare", text: "이게 정답입니다", description: "바벨 중량 + 덤벨 고립 = 최강 조합", durationInSeconds: 3, accent: "#ffd93d", compareData: { left: { title: "바벨컬", description: "중량 자극\n기초 볼륨" }, right: { title: "덤벨컬", description: "피크 수축\n이두 완성" } } },
 ];

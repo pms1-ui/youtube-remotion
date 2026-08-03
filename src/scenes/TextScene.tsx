@@ -11,8 +11,9 @@ import { Scene } from "../data/script";
 
 export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const accent = scene.accent || "#6c5ce7";
+  const isVertical = width < 1200;
 
   const sceneZoom = interpolate(frame, [0, durationInFrames], [1.1, 1.0], {
     extrapolateRight: "clamp",
@@ -43,15 +44,15 @@ export const TextScene: React.FC<{ scene: Scene }> = ({ scene }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
+          top: isVertical ? "18%" : 0,
           left: 0,
           right: scene.characterImage ? "23%" : 0,
-          bottom: 0,
+          bottom: isVertical ? "18%" : 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "80px 60px",
+          padding: isVertical ? "20px 40px" : "80px 60px",
         }}
       >
         {/* 메인 텍스트 — 큰 흰색 */}
