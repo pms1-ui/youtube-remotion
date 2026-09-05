@@ -1,0 +1,44 @@
+# === 의존성 / 빌드 산출물 ===
+youtube-remotion/node_modules/
+youtube-remotion/out/
+youtube-remotion/dist/
+node_modules/
+dist/
+
+# === 비밀키 ===
+youtube-remotion/.env
+.env
+*.env
+
+# === 대용량 미디어 (git에 올리지 않음) ===
+# 오디오 원본/트림 결과
+youtube-remotion/audio/
+# 영상 믹스 소스/결과
+youtube-remotion/mix/
+# Higgsfield 등 외부 생성 영상 다운로드본
+youtube-remotion/video_output/
+# 편집 전 원본 영상
+youtube-remotion/video_before/
+# 생성 캐릭터/이미지 (재생성 가능한 대용량 PNG)
+youtube-remotion/public/*.png
+youtube-remotion/public/image_2026/
+youtube-remotion/public/mix/
+!youtube-remotion/public/.gitkeep
+
+# 확장자 기반 미디어 제외 (어디에 있든)
+*.mp4
+*.mov
+*.m4v
+*.mp3
+*.MP3
+*.wav
+
+# === OS / 에디터 ===
+.DS_Store
+Thumbs.db
+
+# === 임시 작업 파일 ===
+_*.py
+*_raw.b64
+*_tmp*
+youtube-remotion/public/_raw/

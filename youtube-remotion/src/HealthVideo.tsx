@@ -1,0 +1,60 @@
+import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
+import { Scene } from "./data/script";
+import { TextScene } from "./scenes/TextScene";
+import { BarChartScene } from "./scenes/BarChartScene";
+import { DonutChartScene } from "./scenes/DonutChartScene";
+import { LineGraphScene } from "./scenes/LineGraphScene";
+import { HighlightScene } from "./scenes/HighlightScene";
+import { CompareScene } from "./scenes/CompareScene";
+import { TimelineScene } from "./scenes/TimelineScene";
+import { IconListScene } from "./scenes/IconListScene";
+import { SplitFactScene } from "./scenes/SplitFactScene";
+import { RadarChartScene } from "./scenes/RadarChartScene";
+import { ProgressCardsScene } from "./scenes/ProgressCardsScene";
+import { MuscleMapScene } from "./scenes/MuscleMapScene";
+import { TransitionOverlay } from "./components/TransitionOverlay";
+
+export type HealthVideoProps = {
+  scenes: Scene[];
+};
+
+export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
+  const { fps, width } = useVideoConfig();
+  const isVertical = width < 1200;
+
+  let currentFrame = 0;
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: "transparent" }}>
+      {scenes.map((scene, index) => {
+        const startFrame = currentFrame;
+        const durationInFrames = Math.round(scene.durationInSeconds * fps);
+        currentFrame += durationInFrames;
+
+        return (
+          <Sequence
+            key={index}
+            name={`Scene ${index + 1} - ${scene.type}`}
+            from={startFrame}
+            durationInFrames={durationInFrames}
+          >
+            {false && <TransitionOverlay durationInFrames={durationInFrames} />}
+
+            {scene.type === "text" && <TextScene scene={scene} />}
+            {scene.type === "barChart" && <BarChartScene scene={scene} />}
+            {scene.type === "donutChart" && <DonutChartScene scene={scene} />}
+            {scene.type === "lineGraph" && <LineGraphScene scene={scene} />}
+            {scene.type === "highlight" && <HighlightScene scene={scene} />}
+            {scene.type === "compare" && <CompareScene scene={scene} />}
+            {scene.type === "timeline" && <TimelineScene scene={scene} />}
+            {scene.type === "iconList" && <IconListScene scene={scene} />}
+            {scene.type === "splitFact" && <SplitFactScene scene={scene} />}
+            {scene.type === "radarChart" && <RadarChartScene scene={scene} />}
+            {scene.type === "progressCards" && <ProgressCardsScene scene={scene} />}
+            {scene.type === "muscleMap" && <MuscleMapScene scene={scene} />}
+          </Sequence>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
