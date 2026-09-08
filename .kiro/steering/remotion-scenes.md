@@ -36,23 +36,38 @@ fileMatchPattern: 'src/**'
 |------|-----------|
 | 구체적 수치 데이터 | 차트/그래프 (barChart, donutChart, lineGraph) |
 | 비율/퍼센트(절반, 두 배 등) | 도넛/원형 프로그레스 |
-| A vs B 비교 + 수치 | barChart |
+| **개수·수치의 전/후, 대조군 비교 (예: 7.5회→19.6회)** | **beforeAfterChart** |
+| 여러 항목의 단일 퍼센트 값 비교 | barChart |
 | A vs B 비교(수치 없음) | compare |
 | 시계열/추이/변화 | lineGraph |
 | 항목 나열 + 정도 차이 | highlight + bulletValues(원형 프로그레스) |
 | 항목 나열(수치 없음) | highlight(카드 그리드) |
 | 순서/과정/단계 | timeline |
+| 큰 수치 1개 강조 + 이미지 | imageStat |
+| 이미지 + 짧은 설명 | imageText |
+| 이미지가 주인공 | imageShowcase |
 | 순수 메시지 | text |
 - **차트/그래프를 최우선**. text만 나열하지 말 것. "절반/두 배/거의 동일"은 수치로 변환. **근거 없는 수치는 만들지 않되** 표현에서 합리적으로 추론 가능한 수치는 사용.
+- **★ barChart는 값 뒤에 무조건 `%`가 붙는다.** 개수·횟수·kg 등 퍼센트가 아닌 수치, 또는 "전 vs 후" 짝 비교에는 **절대 barChart를 쓰지 말고 `beforeAfterChart`를 쓴다.**
 
 ## 장면 타입 (SceneType)
 - `text`: 메인(82px 흰색) + subtitle(56px accent) + description(32px 회색). 테두리/카드 없음.
-- `barChart`: `barData: {label,value,color}[]`. 바가 아래서 올라오는 spring.
+- `barChart`: `barData: {label,value,color}[]`. 바가 아래서 올라오는 spring. **값 뒤에 `%` 강제 표기** → 퍼센트 데이터 전용.
+- `beforeAfterChart`: **개수·수치 전/후 비교 전용.** `beforeAfterData: {label,before,after}[]` + `unit`(예: "회"). 항목별로 before(회색)/after(accent) 두 막대를 그룹으로 묶고, 막대 위 실제 값(unit 포함), 그룹 상단에 증가배수(▲2.6배, 2배 미만이면 +%) 자동 표기. `%` 안 붙음.
 - `donutChart`: `donutData: {label,value,color}[]`. 세그먼트 순차 그리기.
 - `lineGraph`: `lineData: {label,value}[]`. 선이 좌→우.
 - `highlight`: 강조 메시지 + bulletValues 있으면 원형 프로그레스, 없으면 카드 그리드.
 - `compare`: 좌우 비교. 타이틀=accent 테두리 박스, 설명=테두리 없는 순수 텍스트(화살표 연결).
 - `timeline`: 시간순 단계, 연결선과 함께 순차 등장.
+- `imageStat`: 이미지 + 큰 수치 1개 강조. `statValue`(큰 숫자) + `statLabel`(하단 설명) + `text`(상단 라벨). 이미지=`sceneImage` 우선, 없으면 `characterImage` fallback. 중앙 정렬.
+- `imageText`: 이미지 + 짧은 텍스트(title/subtitle/description)를 화면 중앙에 나란히(가로형)/위아래(세로형). 이미지=`sceneImage`→`characterImage` fallback.
+- `imageShowcase`: 이미지가 주인공. 이미지+캡션(text/subtitle)을 화면 정중앙 세로 스택. `sceneImage` 사용.
+
+### 이미지 씬 필드 (sceneImage 계열)
+- `sceneImage`: 장면 특화 그래픽 이미지 파일명(캐릭터와 별개). `public/scene-*.png`.
+- `statValue`/`statLabel`: imageStat 전용. 큰 수치 + 하단 라벨.
+- **이미지 3종(imageShowcase/imageText/imageStat)은 배경 글로우(radial-gradient) 쓰지 않음** — 초록/컬러 덩어리로 보이는 문제. 순수 중앙 정렬 + drop-shadow만.
+- imageText/imageStat은 `sceneImage` 없으면 `characterImage`를 이미지 자리에 자동 사용(fallback).
 
 ## 디자인 원칙
 ### 배경

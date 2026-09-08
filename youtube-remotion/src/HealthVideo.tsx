@@ -12,6 +12,10 @@ import { SplitFactScene } from "./scenes/SplitFactScene";
 import { RadarChartScene } from "./scenes/RadarChartScene";
 import { ProgressCardsScene } from "./scenes/ProgressCardsScene";
 import { MuscleMapScene } from "./scenes/MuscleMapScene";
+import { ImageShowcaseScene } from "./scenes/ImageShowcaseScene";
+import { ImageTextScene } from "./scenes/ImageTextScene";
+import { ImageStatScene } from "./scenes/ImageStatScene";
+import { BeforeAfterChartScene } from "./scenes/BeforeAfterChartScene";
 import { TransitionOverlay } from "./components/TransitionOverlay";
 
 export type HealthVideoProps = {
@@ -52,6 +56,10 @@ export const HealthVideo: React.FC<HealthVideoProps> = ({ scenes }) => {
             {scene.type === "radarChart" && <RadarChartScene scene={scene} />}
             {scene.type === "progressCards" && <ProgressCardsScene scene={scene} />}
             {scene.type === "muscleMap" && <MuscleMapScene scene={scene} />}
+            {scene.type === "imageShowcase" && <ImageShowcaseScene scene={scene} />}
+            {scene.type === "imageText" && <ImageTextScene scene={scene} />}
+            {scene.type === "imageStat" && <ImageStatScene scene={scene} />}
+            {scene.type === "beforeAfterChart" && <BeforeAfterChartScene scene={scene} />}
           </Sequence>
         );
       })}

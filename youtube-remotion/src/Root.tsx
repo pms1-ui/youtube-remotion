@@ -2,19 +2,31 @@ import { Composition, staticFile } from "remotion";
 import { HealthVideo } from "./HealthVideo";
 import { MixVideo } from "./MixVideo";
 import { AudioReview, AUDIO_REVIEW_TOTAL_FRAMES } from "./AudioReview";
-import { SCENES } from "./data/script";
+import { SCENES, Scene } from "./data/script";
 import { SHORTS_SCENES } from "./data/shorts-script";
 import { MIX_DATA } from "./data/mix-scenes";
 
 const FPS = 30;
+
+// 근지구력 전후 비교 씬 단독 확인/렌더용 (전체 재렌더 없이 이 씬만)
+const BEFORE_AFTER_SCENE: Scene[] = SCENES.filter(
+  (s) => s.type === "beforeAfterChart"
+);
+const beforeAfterFrames = Math.max(
+  1,
+  BEFORE_AFTER_SCENE.reduce(
+    (acc, s) => acc + Math.round(s.durationInSeconds * FPS),
+    0
+  )
+);
 const MIX_FPS = 24;
 const mixDurationInFrames = Math.round(MIX_DATA.totalDuration * MIX_FPS);
 const totalDurationInFrames = SCENES.reduce(
-  (acc, scene) => acc + scene.durationInSeconds * FPS,
+  (acc, scene) => acc + Math.round(scene.durationInSeconds * FPS),
   0
 );
 const shortsDurationInFrames = SHORTS_SCENES.reduce(
-  (acc, scene) => acc + scene.durationInSeconds * FPS,
+  (acc, scene) => acc + Math.round(scene.durationInSeconds * FPS),
   0
 );
 
@@ -53,6 +65,18 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         defaultProps={{
           scenes: SCENES,
+        }}
+      />
+      {/* 근지구력 전후 비교 씬 단독 (따로 보기/렌더용) */}
+      <Composition
+        id="BeforeAfterChart"
+        component={HealthVideo}
+        durationInFrames={beforeAfterFrames}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          scenes: BEFORE_AFTER_SCENE,
         }}
       />
       {/* 숏폼 (9:16) */}
