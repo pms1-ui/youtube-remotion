@@ -50,7 +50,7 @@ inclusion: manual
 - 전부 terminal 되면 `show_generation_by_ids`로 한 번에 정렬 표시.
 
 ## 6. 로컬 다운로드 (항상 마지막에 수행)
-- 저장 경로: `youtube-remotion/video_output/<주제>_<YYMMDD>/`
+- 저장 경로: `video_output/<주제>_<YYMMDD>/` (워크스페이스 루트 기준)
 - 파일명: 장면 순서 번호 + 짧은 영문 설명 (예: `01_train_robbers.mp4`).
   - 중간 삽입 컷은 `01b_`, `01c_` 식으로 사이 번호를 준다.
   - 재생성분은 기존 파일명을 덮어쓴다.

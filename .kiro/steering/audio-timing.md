@@ -74,14 +74,14 @@ output.export("audio/result/파일명_trimmed.mp3", format="mp3", bitrate="320k"
 이 프로젝트 정석: **"Remotion으로 화면만 투명 .mov 렌더 → 프리미어에서 오디오 얹어 확인/마무리."**
 
 ### 두 경로
-1. **Remotion Studio 미리보기** (`npm start`, `cwd=youtube-remotion`): HealthVideo 선택 → 장면 흐름/디자인/타이밍만 확인. ⚠️ script.ts엔 오디오가 안 물려 있어 **음성과 함께 재생 안 됨**(화면 검수용). `AudioReview` 컴포지션은 오디오+장면 동기 검수용(불필요하면 Root.tsx에서 삭제 가능).
+1. **Remotion Studio 미리보기** (`npm start`, 워크스페이스 루트에서 실행): HealthVideo 선택 → 장면 흐름/디자인/타이밍만 확인. ⚠️ script.ts엔 오디오가 안 물려 있어 **음성과 함께 재생 안 됨**(화면 검수용). `AudioReview` 컴포지션은 오디오+장면 동기 검수용(불필요하면 Root.tsx에서 삭제 가능).
 2. **.mov 렌더 → 프리미어 합성** (← 사용자가 마무리): ProRes 4444 투명 .mov를 프리미어 타임라인에 올리고, 같은 타임라인에 최종 오디오(`audio/...mp3`)를 얹어 전환이 나레이션과 맞는지 확인. 투명 배경이라 다른 푸티지 위에 얹어도 됨.
 
 ### 렌더 명령 (롱폼)
 ```
 npx remotion render src/index.ts HealthVideo out/longform/파일명.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le --concurrency=8
 ```
-- `cwd`는 반드시 `d:\kiro\youtube\youtube-remotion`. 장기 렌더는 백그라운드 프로세스로.
+- 명령은 워크스페이스 루트(`d:\kiro\youtube\youtube-remotion`)에서 바로 실행. 장기 렌더는 백그라운드 프로세스로.
 - 렌더 후 출력 경로(`out/longform/...mov`)를 안내하고 프리미어에 오디오와 함께 올려 확인하도록 안내.
 
 ### 왜 완성본(오디오 포함)까지 안 뽑나 (결정)

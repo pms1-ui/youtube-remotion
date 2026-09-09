@@ -8,11 +8,10 @@ inclusion: always
 주제별 상세 지침은 별도 스티어링으로 분리되어 있다 (이 파일 하단 "지침 지도" 참조).
 
 ## ★ 워크스페이스 / 실행 위치 규칙 (필수)
-- 워크스페이스는 보통 **상위 폴더(`d:\kiro\youtube`)** 로 열려 있고, Remotion 프로젝트 실체(package.json, src, node_modules, tsconfig 등)는 **하위 폴더 `youtube-remotion`** 안에 있다.
-- **폴더를 다시 열 필요 없다.** 지금 워크스페이스 그대로 두고 작업한다.
-  - 파일 편집·스크립트 작성: `youtube-remotion\src\...`, `youtube-remotion\script\...` 경로로 그대로 접근.
-  - npm / remotion / 이미지 생성 등 **명령 실행 시 반드시 `cwd`를 `d:\kiro\youtube\youtube-remotion` 으로 지정**해서 돌린다. (루트에서 실행하면 package.json이 없어 실패)
-- 스티어링·MCP 설정은 루트(`d:\kiro\youtube\.kiro`)에 있다. 영상 작업에는 지장 없다.
+- **워크스페이스 루트 = `d:\kiro\youtube\youtube-remotion`** (2026-09 구조 평탄화 완료). 이 폴더 자체가 Remotion 프로젝트 실체(package.json, src, node_modules, tsconfig)이자 git 저장소 루트이며 `.kiro`(스티어링·MCP)도 여기 있다.
+  - 파일 편집·스크립트 작성: `src\...`, `script\...` 처럼 **루트 기준 상대경로**로 접근.
+  - npm / remotion / 이미지 생성 / git 등 **명령은 워크스페이스 루트에서 바로 실행**한다. 별도 `cwd` 지정 불필요(기본값이 이미 이 폴더). package.json·.git 모두 여기 있다.
+- ⚠️ 과거엔 `youtube/youtube-remotion` 2단 중첩이었으나 지금은 `youtube-remotion` 단독 루트다. 옛 경로(`d:\kiro\youtube\youtube-remotion\...` 접두어, "cwd를 youtube-remotion으로 지정")를 쓰지 말 것.
 
 ## ★ 포맷 확인 규칙 (필수)
 - 사용자가 영상/스크립트 제작을 요청할 때 **롱폼/숏폼을 명시하지 않으면 반드시 물어볼 것**
@@ -34,17 +33,18 @@ inclusion: always
 - 총 길이 30~60초 권장 / 출력: ProRes 4444 (.mov) → `out/shortform/`
 - 레이아웃 자동 최적화: `const isVertical = width < 1200;` 감지 시 BarChart 너비 700px, Highlight 그리드 1열
 
-### 렌더 명령 (롱폼/숏폼 공통 형식, `cwd=youtube-remotion`)
+### 렌더 명령 (롱폼/숏폼 공통 형식, 워크스페이스 루트에서 실행)
 ```
 npx remotion render src/index.ts <HealthVideo|ShortVideo> out/<longform|shortform>/파일명.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le --concurrency=8
 ```
 - **★ `--concurrency=8` 항상 포함** (멀티코어 병렬 렌더).
 - **장기 렌더는 백그라운드 프로세스로 실행**하고 출력만 폴링한다. (일반 명령으로 돌리면 타임아웃)
 
-## ★ 폴더 구조 및 용도 (`youtube-remotion/` 내부)
+## ★ 폴더 구조 및 용도 (워크스페이스 루트 = `youtube-remotion/`)
 
 ```
-youtube-remotion/
+(워크스페이스 루트)
+├── .kiro/                  # 스티어링(steering/) + MCP 설정(settings/mcp.json)
 ├── src/                    # Remotion 소스코드 (영상 렌더링의 실체)
 │   ├── index.ts            # 엔트리포인트 (registerRoot)
 │   ├── Root.tsx            # Composition 등록 (HealthVideo, ShortVideo, MixVideo, AudioReview)
@@ -103,4 +103,4 @@ youtube-remotion/
 | Higgsfield 영상 제작 | `higgsfield-video-workflow.md` | 수동(#) |
 | 영상 믹스(컷 섞기) | `video-mix.md` | 수동(#) |
 
-> 전체 개요는 `youtube-remotion/GUIDE.md` (인덱스). 상세 규칙은 위 각 스티어링에 있다.
+> 전체 개요는 워크스페이스 루트의 `GUIDE.md` (인덱스). 상세 규칙은 위 각 스티어링에 있다.
