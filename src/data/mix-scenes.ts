@@ -101,6 +101,23 @@ export const MIX_DATA: MixData = {
 };
 
 /**
+ * 경계 오염 프레임 제거용 트림 값 (초).
+ * scene detection 경계와 키프레임이 어긋나 컷 앞뒤에 직전/직후 장면 프레임이
+ * 딸려오는 문제를 막기 위해, 각 장면의 앞뒤를 이만큼 잘라내고 안쪽만 사용한다.
+ * 렌더 시 세그먼트 추출 구간 = [start + TRIM_HEAD, end - TRIM_TAIL].
+ */
+export const TRIM_HEAD = 0.5;
+export const TRIM_TAIL = 0.5;
+
+/** 트림 후 유효 구간을 반환. 트림으로 뒤집히면(너무 짧으면) null. */
+export function trimmedRange(scene: MixScene): { start: number; end: number } | null {
+  const start = scene.start + TRIM_HEAD;
+  const end = scene.end - TRIM_TAIL;
+  if (end - start <= 0) return null;
+  return { start, end };
+}
+
+/**
  * Fisher-Yates shuffle with seed for reproducibility
  */
 export function shuffleScenes(scenes: MixScene[], seed: number): MixScene[] {

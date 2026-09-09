@@ -13,7 +13,7 @@ Remotion 기반 스크립트→영상 자동 생성 시스템. 스크립트를 �
 | **스크립트 작성** | `script-writing.md` | `script/**` 편집 시 자동 | 롱폼 톤·오프닝 후킹, 숏폼 규칙, 후킹/마무리 패턴, 장면 분할 기준 |
 | **Remotion 장면/디자인** | `remotion-scenes.md` | `src/**` 편집 시 자동 | 제작 실행 순서, 장면 타입, 디자인 원칙, 폰트/색상, 레이아웃, 최소 폰트 |
 | **캐릭터 이미지** | `character-images.md` | 수동(#) | gpt-image-2 생성, 프롬프트 규칙, 포즈 프롬프트 풀, 재사용 전략, 검증 체크리스트 |
-| **오디오 트림·타이밍** | `audio-timing.md` | 수동(#) | 무음 트림, faster-whisper 전사 기반 타이밍 재배분, 프리미어 확인 워크플로우 |
+| **오디오 트림·타이밍** | `audio-timing.md` | 수동(#) | 무음 트림, faster-whisper 전사 기반 타이밍 재배분, 결과물 확인 |
 | **Higgsfield 영상 제작** | `higgsfield-video-workflow.md` | 수동(#) | 레퍼런스→영상 배치 생성→다운로드→히스토리 정리 절차 |
 | **영상 믹스** | `video-mix.md` | 수동(#) | 컷 자동 감지, seed 셔플, ffmpeg concat 렌더 |
 
@@ -43,8 +43,8 @@ npx remotion studio
 ② 사용자: 녹음 + 오디오 트림                                (→ audio-timing.md)
 ③ hmad.txt 기반 화면 생성: 장면 구성 → script.ts → 이미지 → 렌더  (→ remotion-scenes.md, character-images.md)
 ④ 최종 오디오 확정 → 전사 기반 타이밍 재배분 → 재렌더        (→ audio-timing.md)
-⑤ .mov를 프리미어에 올려 오디오와 합쳐 확인·마무리          (→ audio-timing.md)
 ```
+> ④까지가 이 워크스페이스의 작업 범위다. 투명 .mov 출력 이후의 오디오 합성·자막·편집 마무리는 워크스페이스 밖에서 사용자가 처리한다.
 
 > Higgsfield로 실사 영상을 만드는 별도 흐름은 `higgsfield-video-workflow.md` 참조.
 > 스크립트 품질 인사이트·반복 실수 방지 노트는 각 스티어링 하단에 누적한다.
